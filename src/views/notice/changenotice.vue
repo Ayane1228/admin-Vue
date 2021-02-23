@@ -54,18 +54,30 @@
 <script>
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
-// 导入时间戳转换函数
+// 导入时间戳转换为标准时间函数
 import utc2beijing from '../../utils/get-noticeTime'
+
 export default {
     data() {
       return {
         list: [],
-        textareaTitle:'',
-        textareaContent:''
+        textareaContent:null
+      }
+    },
+    //计算属性获取token
+    computed:{
+      header(){
+        return {
+          Authorization:`Bearer ${getToken()}`
+        }
       }
     },
     methods:{
-      // 获取当前列的index和内容
+      //刷新页面
+      reload(){
+        window.location.reload();
+      },
+      // 获取当前列详情的index和内容
       showContent(index,row){
         this.$alert(this.$data.list[index].noticeContent, this.$data.list[index].noticeTitle, {
         customClass:"msgBox",
@@ -81,30 +93,54 @@ export default {
       },
       // 提交新公告
       submitNotice(){
+        //判断内容是否为空
+        if (this.$data.textareaContent === null ) {
+            this.$message({
+            type: 'warning',
+            message: '内容不能为空 ' 
+          })
+        } else {
           this.$prompt('请输入标题', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(({ value }) => {
-          this.$message({
+          // 请求发布通知接口
+          // 获取当前的token
+          const token = this.header
+          axios({
+            url:'http://localhost:18082/notice/changenotice',
+            method:'post',
+            // 添加token
+            headers:{
+              Authorization:token.Authorization
+            },
+            data:{
+                noticeTitle:value,
+                noticeContent:this.$data.textareaContent
+                }
+          }).then( (res) =>{
+            // axios响应成功,刷新页面
+            console.log(res);
+          }).catch( (err) => {
+              console.log('请求发布接口失败' + err);
+            })
+        // 发布结束之后的回调    
+        this.$message({
             type: 'success',
             message: '发布成功,标题为: ' + value
-          });
-        }).catch(() => {
+          }).then(
+            // 刷新页面
+            setTimeout(this.reload(),30000)
+          ).catch((err) => {
           this.$message({
-            type: 'info',
-            message: '取消输入'
-          });       
+            type: 'error',
+            message: '发布失败'
+          })       
         });
-      }
-    },
-    //计算属性获取token
-    computed:{
-      header(){
-        return {
-          Authorization:`Bearer ${getToken()}`
-        }
-      }
-    },
+      })
+    }
+  }
+},
     beforeMount() {
       const that = this
       const token = this.header
@@ -114,8 +150,7 @@ export default {
             headers:{
               Authorization:token.Authorization
             }
-        })
-          .then( function (res) {
+        }).then( function (res) {
             //保存到data中
             res.data.data.map( (item) => {
               //格式化时间
@@ -144,4 +179,5 @@ export default {
 .newNotice button{
   margin-top: 10px;
 }
+
 </style>
