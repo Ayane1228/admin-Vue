@@ -1,6 +1,7 @@
 import { asyncRoutes, constantRoutes } from '@/router'
 
 /**
+ * 判断role是否在roles的方法
  * Use meta.role to determine if the current user has permission
  * @param roles
  * @param route

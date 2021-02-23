@@ -1,7 +1,7 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
-
+//状态列表
 const state = {
   token: getToken(),
   name: '',
@@ -10,6 +10,7 @@ const state = {
   roles: []
 }
 
+//修改vuex 的入口
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
@@ -28,14 +29,16 @@ const mutations = {
   }
 }
 
+//全局方法
 const actions = {
-  // user login
+  // 登录方法
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
+        //登录成功后 保存 token
         setToken(data.token)
         resolve()
       }).catch(error => {
@@ -44,21 +47,21 @@ const actions = {
     })
   },
 
-  // get user info
+  // get user info 获取用户信息
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
 
         if (!data) {
-          reject('Verification failed, please Login again.')
+          reject('验证失败，请重新登录。')
         }
 
         const { roles, name, avatar, introduction } = data
 
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
+          reject('getInfo: roles 必须为数组!')
         }
 
         commit('SET_ROLES', roles)
@@ -71,28 +74,22 @@ const actions = {
       })
     })
   },
-
-  // user logout
+  // 退出
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
+      try {
         commit('SET_TOKEN', '')
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
-
         resolve()
-      }).catch(error => {
-        reject(error)
-      })
+      } catch (e) {
+        reject(e)
+      }
     })
   },
 
-  // remove token
   resetToken({ commit }) {
     return new Promise(resolve => {
       commit('SET_TOKEN', '')
@@ -101,8 +98,6 @@ const actions = {
       resolve()
     })
   },
-
-  // dynamically modify permissions
   async changeRoles({ commit, dispatch }, role) {
     const token = role + '-token'
 
@@ -113,12 +108,9 @@ const actions = {
 
     resetRouter()
 
-    // generate accessible routes map based on roles
     const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-    // dynamically add accessible routes
     router.addRoutes(accessRoutes)
 
-    // reset visited views and cached views
     dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
