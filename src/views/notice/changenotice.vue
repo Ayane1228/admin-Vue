@@ -42,7 +42,11 @@
               @click="showContent(scope.$index, scope.row)">
               查看详情
             </el-button>
-            <el-button type="danger">删除该通知</el-button>
+            <el-button 
+              @click="deleteNotice(scope.$index, scope.row)"
+              type="danger">
+              删除公告
+            </el-button>
           </template>
         </el-table-column>
     </el-table>
@@ -77,7 +81,7 @@ export default {
       reload(){
         window.location.reload();
       },
-      // 获取当前列详情的index和内容
+      // 展示详情
       showContent(index,row){
         this.$alert(this.$data.list[index].noticeContent, this.$data.list[index].noticeTitle, {
         customClass:"msgBox",
@@ -91,7 +95,27 @@ export default {
           console.log(err);
         });
       },
-      // 提交新公告
+      // 删除公告
+      deleteNotice(index,row){
+        const deleteNotice = row.noticeTitle;
+        this.$alert(`是否要删除公告:${row.noticeTitle}`, '删除公告', {
+          confirmButtonText: '确定删除'
+        }).then ( () =>{
+            // 获取当前的token
+            const token = this.header
+            axios({
+              url:'http://localhost:18082/notice/deleteNotice',
+              method:"post",
+              headers:{
+                Authorization:token.Authorization
+              },
+              data:{deleteNotice}
+            })
+        }).catch( (err) => {
+          console.log(err);
+        })
+      },
+      // 提交公告
       submitNotice(){
         //判断内容是否为空
         if (this.$data.textareaContent === null ) {
@@ -119,28 +143,27 @@ export default {
                 noticeContent:this.$data.textareaContent
                 }
           }).then( (res) =>{
-            // axios响应成功,刷新页面
             console.log(res);
           }).catch( (err) => {
               console.log('请求发布接口失败' + err);
             })
-        // 发布结束之后的回调    
-        this.$message({
-            type: 'success',
-            message: '发布成功,标题为: ' + value
-          }).then(
-            // 刷新页面
-            setTimeout(this.reload(),30000)
-          ).catch((err) => {
-          this.$message({
-            type: 'error',
-            message: '发布失败'
-          })       
-        });
-      })
-    }
-  }
-},
+            // 发布结束之后的回调    
+            this.$message({
+                type: 'success',
+                message: '发布成功,标题为: ' + value
+              }).then( 
+                // 刷新页面
+                setTimeout(this.reload(),50000)
+              ).catch((err) => {
+              this.$message({
+                type: 'error',
+                message: '发布失败'
+              })       
+            });
+        })
+      }
+      }
+  },
     beforeMount() {
       const that = this
       const token = this.header
