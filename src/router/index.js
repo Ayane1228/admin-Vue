@@ -121,16 +121,16 @@ export const asyncRoutes = [
     meta: { title: '账号管理', icon: 'peoples', roles: ['admin'] },
     children: [
       {
-        path: '/account/studentaccount',
-        component: () => import('@/views//account/studentaccount'),
-        name: 'studentinformation',
-        meta: { title: '学生账号', icon: 'peoples', roles: ['admin'] }
+        path:'/account/studentAccount',
+        component: () => import('@/views//account/studentAccount'),
+        name:'accountManagement',
+        meta: { title: '学生账号管理', icon: 'peoples', roles: ['admin']}
       },
       {
-        path: '/account/teacheraccount',
-        component: () => import('@/views//account/teacheraccount'),
-        name: 'teacherformation',
-        meta: { title: '老师账号', icon: 'peoples', roles: ['admin'] }
+        path:'/account/teacherAccount',
+        component: () => import('@/views//account/teacherAccount'),
+        name:'accountManagement',
+        meta: { title: '教师账号管理', icon: 'peoples', roles: ['admin']}
       }
     ]
   },
