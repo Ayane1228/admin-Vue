@@ -110,7 +110,7 @@ export const asyncRoutes = [
         path: '/information/teacherinformation',
         component: () => import('@/views//information/teacherinformation'),
         name: 'teacherinformation',
-        meta: { title: '老师个人信息', icon: 'user', roles: ['teacher'] }
+        meta: { title: '教师个人信息', icon: 'user', roles: ['teacher'] }
       }
     ]
   },
