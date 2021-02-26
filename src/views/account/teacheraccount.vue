@@ -10,8 +10,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="5">
-          <el-form-item label="密码" prop="newPassword">
-            <el-input v-model="newTeacherForm.newPassword" placeholder="密码"></el-input>
+          <el-form-item label="密码" prop="newPassword" >
+            <el-input v-model="newTeacherForm.newPassword" placeholder="密码" show-password></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="5">
@@ -50,6 +50,9 @@
           </el-form-item>
           <el-form-item label="姓名">
             <span>{{ props.row.truename }}</span>
+          </el-form-item>
+          <el-form-item label="工号">
+            <span>{{ props.row.teacherID }}</span>
           </el-form-item>
           <el-form-item label="联系电话">
             <span>{{ props.row.phone}}</span>

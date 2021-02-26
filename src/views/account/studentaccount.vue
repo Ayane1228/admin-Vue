@@ -11,8 +11,8 @@
           </el-form-item>
         </el-col>
         <el-col :span="5">
-          <el-form-item label="密码" prop="newPassword">
-            <el-input v-model="newStudentForm.newPassword" placeholder="密码"></el-input>
+          <el-form-item label="密码" prop="newPassword" >
+            <el-input v-model="newStudentForm.newPassword" placeholder="密码" show-password></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="5">
@@ -141,10 +141,10 @@ import { getToken } from '@/utils/auth'
           value: '信息工程学院',
           label: '信息工程学院',
           children: [{
-            value: '软件工程',
+            value: '信息工程学院/软件工程',
             label: '软件工程'
           }, {
-            value: '软件工程(嵌入式)',
+            value: '信息工程学院/软件工程(嵌入式)',
             label: '软件工程(嵌入式)',
           }]
           }, 
@@ -152,20 +152,21 @@ import { getToken } from '@/utils/auth'
           value: '机电工程学院',
           label: '机电工程学院',
           children: [{
-            value: '车辆工程',
+            value: '机电工程学院/车辆工程',
             label: '车辆工程',
           }, {
-            value: '工业设计',
+            value: '机电工程学院/工业设计',
             label: '工业设计',
           }]
-        }, {
+          }, 
+          {
           value: '金融学院',
           label: '金融学院',
           children: [{
-            value: '国际经济与贸易',
+            value: '金融学院/国际经济与贸易',
             label: '国际经济与贸易'
           }, {
-            value: '会计学及会计学CIMA',
+            value: '金融学院/会计学及会计学CIMA',
             label: '会计学及会计学CIMA'
           }]
         }]
@@ -200,12 +201,12 @@ import { getToken } from '@/utils/auth'
         const newSName = this.$data.newStudentForm.newName
         const newStudentID = this.$data.newStudentForm.newStudentID
         const newStudentClassID = this.$data.newStudentForm.newStudentClassID 
-        const newStudentMagor = this.$refs['zhuangye'].getCheckedNodes()[0].data.label
+        const newStudentMajor = this.$refs['zhuangye'].getCheckedNodes()[0].data.value
         axios({
             url:'http://localhost:18082/studentAccount/addStudentAccount',
             method:'post',
             headers:{ Authorization:token.Authorization },
-            data:{newSAccount,newSPassword,newSName,newStudentID,newStudentClassID,newStudentMagor}
+            data:{newSAccount,newSPassword,newSName,newStudentID,newStudentClassID,newStudentMajor}
         }).then ( (res) => {
           console.log(res);
         }).catch( (err) => {
