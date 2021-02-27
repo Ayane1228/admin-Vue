@@ -3,7 +3,7 @@
     <h3>教师个人信息</h3>
     <el-form ref="form" :model="form" label-width="80px">
       <el-form-item label="姓名">
-        <el-col :span="5">
+        <el-col :span="10">
         <el-input 
           v-model="form.truename"  
           :disabled="true" ></el-input>
@@ -11,32 +11,32 @@
       </el-form-item>
       
       <el-form-item label="职工号">
-        <el-col :span="5">
+        <el-col :span="10">
         <el-input v-model="form.teacherID"  :disabled="true"></el-input>
         </el-col>
       </el-form-item>
       
       
       <el-form-item label="联系电话">
-          <el-col :span="5">
+          <el-col :span="10">
             <el-input v-model="form.phone"></el-input>
           </el-col>
       </el-form-item>
       
       <el-form-item label="电子邮箱">
-        <el-col :span="5">
+        <el-col :span="10">
           <el-input v-model="form.emial"></el-input>
         </el-col>
       </el-form-item>
 
       <el-form-item label="办公室">
-        <el-col :span="5">
+        <el-col :span="10">
           <el-input v-model="form.office"></el-input>
         </el-col>
       </el-form-item>
 
       <el-form-item label="选题信息">
-        <el-col :span="5">
+        <el-col :span="10">
         <el-select v-model="value" placeholder="选题题目">
           <el-option
               v-for="item in form.options"
@@ -69,12 +69,21 @@ export default {
           email:null,
           office:'4N416',
           options: [{
-          value: '选项1',
-          label: '黄金糕'
+          // value: '选项1',
+          // label: '黄金糕'
         }],
         }
       }
   },    
+  methods:{
+    // 管理员照顾好提示
+    adminAccount(){
+      this.$message({
+        message: '管理员账号',
+        center: true
+      });
+    }
+  },
   //计算属性获取token
     computed:{
       header(){
@@ -86,21 +95,18 @@ export default {
     beforeMount() {
       const that = this
       const token = this.header
-      console.log(token);
       // 请求后端数据
-      // axios.get('http://localhost:18082/information/teacherinformation',{
-      //       // 并保存token到请求头中
-      //       headers:{
-      //         Authorization:token.Authorization
-      //       }
-      //   })
-      //     .then( function (res) {
-      //       //保存到data中
-      //       res.data.data.map( (item) => {
-      //         // 显示数据
-      //         that.$data.list.push(item)
-      //       })
-      // }).catch( err => { console.log(err); })
+      axios.get('http://localhost:18082/information/teacherInformation',{
+            // 并保存token到请求头中
+            headers:{
+              Authorization:token.Authorization
+            }
+        }).then( (res) =>{
+          console.log(res);
+        }).catch( (err) => {
+          console.log(err);
+        })
+
   },
 }
 </script>
@@ -115,3 +121,8 @@ export default {
     margin-left: 10px;
   }
 </style>
+                          //保存到data中
+            res.data.data.map( (item) => {
+              // 显示数据
+              that.$data.list.push(item)
+            })
