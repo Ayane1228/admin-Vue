@@ -20,11 +20,11 @@
     <div id="main">
     <h3>最新通知</h3>
     <el-table
-    :data="list"
-    stripe
-    fit
-    highlight-current-row
-    style="width: 100%">
+      :data="list"
+      stripe
+      fit
+      highlight-current-row
+      style="width: 100%">
         <el-table-column
           prop="noticeTime"
           label="日期"

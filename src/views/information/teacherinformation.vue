@@ -25,7 +25,7 @@
       
       <el-form-item label="电子邮箱">
         <el-col :span="10">
-          <el-input v-model="form.emial"></el-input>
+          <el-input v-model="form.email"></el-input>
         </el-col>
       </el-form-item>
 
@@ -37,7 +37,7 @@
 
       <el-form-item label="选题信息">
         <el-col :span="10">
-        <el-select v-model="value" placeholder="选题题目">
+        <el-select v-model="value" placeholder="选题题目" id="option">
           <el-option
               v-for="item in form.options"
               :key="item.value"
@@ -45,7 +45,7 @@
               :value="item.value">
           </el-option>
         </el-select>
-        <el-button type="primary" icon="el-icon-search" circle class="showMore"></el-button>
+        <el-button type="primary" icon="el-icon-search" circle id="showMore" ></el-button>
         </el-col>
       </el-form-item>
 
@@ -62,12 +62,14 @@ import { getToken } from '@/utils/auth'
 export default {
       data() {
       return {
+        // flag 0为管理员,1为教师
+        flag:null,
         form: {
           truename:null,
           teacherID:null,
           phone:null,
           email:null,
-          office:'4N416',
+          office:null,
           options: [{
           // value: '选项1',
           // label: '黄金糕'
@@ -76,12 +78,46 @@ export default {
       }
   },    
   methods:{
-    // 管理员照顾好提示
+    // 管理员账号提示
     adminAccount(){
       this.$message({
         message: '管理员账号',
         center: true
       });
+    },
+    onSubmit(){
+      const token = this.header
+      if (this.$data.flag === 0)  {
+        const trueName = this.$data.form.truename
+        const newPhone = this.$data.form.phone
+        const newEmail = this.$data.form.email
+        const newOffice = this.$data.form.office
+        axios({
+          url:'http://localhost:18082/information/adminChangeInf',
+          method:"post",
+          headers:{ Authorization:token.Authorization },
+          data:{ trueName,newPhone,newEmail,newOffice }
+        }).then( (res) => {
+          console.log(res);
+        }).catch( (err) => {
+          console.log(err);
+        })
+      } else {
+        const trueName = this.$data.form.truename
+        const newPhone = this.$data.form.phone
+        const newEmail = this.$data.form.email
+        const newOffice = this.$data.form.office
+        axios({
+          url:'http://localhost:18082/information/teacherChangeInf',
+          method:"post",
+          headers:{ Authorization:token.Authorization },
+          data:{ trueName,newPhone,newEmail,newOffice }
+        }).then( (res) => {
+          console.log(res);
+        }).catch( (err) => {
+          console.log(err);
+        })
+      }
     }
   },
   //计算属性获取token
@@ -94,6 +130,7 @@ export default {
     },
     beforeMount() {
       const that = this
+      const dataForm = that.$data.form
       const token = this.header
       // 请求后端数据
       axios.get('http://localhost:18082/information/teacherInformation',{
@@ -102,7 +139,25 @@ export default {
               Authorization:token.Authorization
             }
         }).then( (res) =>{
-          console.log(res);
+          if (res.data.msg == '获取admin信息成功') {
+            that.$data.flag = 0
+            this.adminAccount()
+            const result = res.data.data[0]
+            dataForm.truename = result.truename
+            dataForm.teacherID = result.teacherID
+            dataForm.phone = result.phone
+            dataForm.email = result.email
+            dataForm.office = result.office
+            document.getElementById('option').placeholder = '管理员无法提交选题'       
+          } else {
+              that.$data.flag = 1
+              const result = res.data.data[0]
+              dataForm.truename = result.truename
+              dataForm.teacherID = result.teacherID
+              dataForm.phone = result.phone
+              dataForm.email = result.email
+              dataForm.office = result.office              
+          }
         }).catch( (err) => {
           console.log(err);
         })
@@ -110,6 +165,7 @@ export default {
   },
 }
 </script>
+
 <style>
   h3{
     margin-left: 20px;
@@ -117,12 +173,7 @@ export default {
   .mian{
     padding-left: 50px;
   }
-  .showMore{
+  #showMore{
     margin-left: 10px;
   }
 </style>
-                          //保存到data中
-            res.data.data.map( (item) => {
-              // 显示数据
-              that.$data.list.push(item)
-            })

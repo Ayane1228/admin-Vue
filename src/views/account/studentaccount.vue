@@ -178,9 +178,10 @@ import { getToken } from '@/utils/auth'
             {required: true, message: '请输入密码', trigger: 'blur'},
             { min: 4, message: '密码长度最小为4个字,符', trigger: 'blur' }
           ],
-          newName:[
-            {required: true, message: '请输入学生姓名', trigger: 'blur'}
-          ]
+          newName:[{required: true, message: '请输入学生姓名', trigger: 'blur'}],
+          newStudentID:[{required: true, message: '请输入学生学号', trigger: 'blur'}],
+          newStudentClassID:[{required: true, message: '请输入学生班号', trigger: 'blur'}]
+
         },
         tableData: []
       }

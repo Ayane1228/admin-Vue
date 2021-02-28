@@ -123,7 +123,8 @@ import { getToken } from '@/utils/auth'
           ],
           newName:[
             {required: true, message: '请输入教师姓名', trigger: 'blur'}
-          ]
+          ],
+          newTeacherID:[{required: true, message: '请输入工号', trigger: 'blur'}],
         },
         tableData: []
       }
