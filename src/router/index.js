@@ -111,6 +111,13 @@ export const asyncRoutes = [
         component: () => import('@/views//information/teacherinformation'),
         name: 'teacherinformation',
         meta: { title: '教师个人信息', icon: 'user', roles: ['teacher'] }
+      },
+      {
+        path:'/information/errorinformation',
+        component:() => import('@/views//information/adminStudent'),
+        name:'errorinformation',
+        meta:{ title:'管理员无法访问学生个人信息',roles:['admin']},
+        hidden: true
       }
     ]
   },

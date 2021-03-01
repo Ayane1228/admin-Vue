@@ -31,7 +31,7 @@
 
       <el-form-item label="专业">
         <el-col :span="10">
-          <el-input v-model="form.major"></el-input>
+          <el-input v-model="form.major" :disabled="true"></el-input>
         </el-col>
       </el-form-item>
 
@@ -41,7 +41,7 @@
           type="textarea"
           :autosize="{ minRows: 6}"
           placeholder="请输入个人简介"
-          v-model="introduction">
+          v-model="form.introduction">
         </el-input>
         </el-col>
       </el-form-item>
@@ -70,21 +70,30 @@ export default {
       }
   },    
   methods:{
+    // 提示保存成功
+    change() {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        });
+      },
     onSubmit(){
+      this.change()
       const token = this.header
-        const trueName = this.$data.form.truename
-        const newPhone = this.$data.form.phone
-        const newEmail = this.$data.form.email
-        // axios({
-        //   url:'http://localhost:18082/information/adminChangeInf',
-        //   method:"post",
-        //   headers:{ Authorization:token.Authorization },
-        //   data:{ trueName,newPhone,newEmail,newOffice }
-        // }).then( (res) => {
-        //   console.log(res);
-        // }).catch( (err) => {
-        //   console.log(err);
-        // })
+      const trueName = this.$data.form.truename
+      const newPhone = this.$data.form.phone
+      const newEmail = this.$data.form.email
+      const newIntroduction = this.$data.form.introduction
+        axios({
+          url:'http://localhost:18082/information/studentChangeInf',
+          method:"post",
+          headers:{ Authorization:token.Authorization },
+          data:{ trueName,newPhone,newEmail,newIntroduction }
+        }).then( (res) => {
+          console.log(res);
+        }).catch( (err) => {
+          console.log(err);
+        })
     }
   },
   //计算属性获取token
@@ -106,16 +115,17 @@ export default {
               Authorization:token.Authorization
             }
         }).then( (res) =>{
-          if (res.data.msg == '获取admin信息成功') {
-            
+          if (res.data == '管理员无权访问学生个人信息') {
+            // 重定向
+            window.location.href = 'http://localhost:9527/index.html#/information/errorinformation'
           } else {
-              that.$data.flag = 1
               const result = res.data.data[0]
               dataForm.truename = result.truename
-              dataForm.teacherID = result.teacherID
+              dataForm.studentID = result.studentID
               dataForm.phone = result.phone
               dataForm.email = result.email
-              dataForm.office = result.office              
+              dataForm.major = result.major              
+              dataForm.introduction = result.introduction
           }
         }).catch( (err) => {
           console.log(err);

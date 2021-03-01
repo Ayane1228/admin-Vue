@@ -78,6 +78,13 @@ export default {
       }
   },    
   methods:{
+    // 提示保存成功
+    change() {
+        this.$message({
+          message: '保存成功',
+          type: 'success'
+        });
+      },
     // 管理员账号提示
     adminAccount(){
       this.$message({
@@ -86,6 +93,7 @@ export default {
       });
     },
     onSubmit(){
+      this.change()
       const token = this.header
       if (this.$data.flag === 0)  {
         const trueName = this.$data.form.truename
