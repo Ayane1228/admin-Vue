@@ -149,25 +149,25 @@ import { getToken } from '@/utils/auth'
           }]
           }, 
           {
-          value: '机电工程学院',
-          label: '机电工程学院',
+          value: '机电工程与自动化学院',
+          label: '机电工程与自动化学院',
           children: [{
-            value: '机电工程学院/车辆工程',
+            value: '机电工程与自动化学院/车辆工程',
             label: '车辆工程',
           }, {
-            value: '机电工程学院/工业设计',
-            label: '工业设计',
+            value: '机电工程学院/自动化',
+            label: '自动化',
           }]
           }, 
           {
-          value: '金融学院',
-          label: '金融学院',
+          value: '国际商学院',
+          label: '国际商学院',
           children: [{
-            value: '金融学院/国际经济与贸易',
+            value: '国际商学院/国际经济与贸易',
             label: '国际经济与贸易'
           }, {
-            value: '金融学院/会计学及会计学CIMA',
-            label: '会计学及会计学CIMA'
+            value: '国际商学院/会计学CIMA',
+            label: '会计学CIMA'
           }]
         }]
         },

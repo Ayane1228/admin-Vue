@@ -35,6 +35,12 @@
         </el-col>
       </el-form-item>
 
+      <el-form-item label="职称">
+        <el-col :span="10">
+          <el-input v-model="form.teacherrank" placeholder="管理员无法填写职称"></el-input>
+        </el-col>
+      </el-form-item>
+
       <el-form-item label="选题信息">
         <el-col :span="10">
         <el-select v-model="value" placeholder="选题题目" id="option">
@@ -70,6 +76,7 @@ export default {
           phone:null,
           email:null,
           office:null,
+          teacherrank:null,
           options: [{
           // value: '选项1',
           // label: '黄金糕'
@@ -95,6 +102,7 @@ export default {
     onSubmit(){
       this.change()
       const token = this.header
+      // 管理员
       if (this.$data.flag === 0)  {
         const trueName = this.$data.form.truename
         const newPhone = this.$data.form.phone
@@ -111,15 +119,17 @@ export default {
           console.log(err);
         })
       } else {
+      // 教师
         const trueName = this.$data.form.truename
         const newPhone = this.$data.form.phone
         const newEmail = this.$data.form.email
         const newOffice = this.$data.form.office
+        const newTeacherrank = this.$data.form.teacherrank
         axios({
           url:'http://localhost:18082/information/teacherChangeInf',
           method:"post",
           headers:{ Authorization:token.Authorization },
-          data:{ trueName,newPhone,newEmail,newOffice }
+          data:{ trueName,newPhone,newEmail,newOffice,newTeacherrank }
         }).then( (res) => {
           console.log(res);
         }).catch( (err) => {
@@ -156,6 +166,7 @@ export default {
             dataForm.phone = result.phone
             dataForm.email = result.email
             dataForm.office = result.office
+            dataForm.teacherrank = result.teacherrank
             document.getElementById('option').placeholder = '管理员无法提交选题'       
           } else {
               that.$data.flag = 1
@@ -164,7 +175,8 @@ export default {
               dataForm.teacherID = result.teacherID
               dataForm.phone = result.phone
               dataForm.email = result.email
-              dataForm.office = result.office              
+              dataForm.office = result.office
+              dataForm.teacherrank = result.teacherrank              
           }
         }).catch( (err) => {
           console.log(err);

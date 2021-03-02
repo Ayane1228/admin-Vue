@@ -60,6 +60,9 @@
           <el-form-item label="电子邮箱">
             <span>{{ props.row.email}}</span>
           </el-form-item>
+          <el-form-item label="职称">
+            <span>{{ props.row.teacherrank}}</span>
+          </el-form-item>
         </el-form>
       </template>
     </el-table-column>
@@ -108,11 +111,12 @@ import { getToken } from '@/utils/auth'
   export default {
     data() {
       return {
+        // 新增数据
         newTeacherForm: {
           newAccount: null,
           newPassword: null,
           newName:null,
-          newTeacherID:null,
+          newTeacherID:null
         },
         // 验证规则
         rules:{

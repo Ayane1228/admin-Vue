@@ -88,7 +88,7 @@ export const asyncRoutes = [
       },
       {
         path: '/select/changeselect',
-        component: () => import('@/views//select/changeselect'),
+        component: () => import('@/views//select/addSelect'),
         name: 'changeselect',
         meta: { title: '提交选题', icon: 'edit', roles: ['teacher'] }
       }
