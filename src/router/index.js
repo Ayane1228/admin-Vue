@@ -75,6 +75,13 @@ export const asyncRoutes = [
     meta: { title: '论文选题', icon: 'edit' },
     children: [
       {
+        path:'/selcet/errorselect',
+        component: () => import('@/views//select/errorSelect'),
+        name: 'errorSelect',
+        meta: { title: '管理提交选题错误', icon: 'edit' ,roles: ['admin'] },
+        hidden: true
+      },
+      {
         path: '/select/showselect',
         component: () => import('@/views//select/showselect'),
         name: 'showselect',

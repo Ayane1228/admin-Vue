@@ -154,10 +154,8 @@ import { getToken } from '@/utils/auth'
             headers:{ Authorization:token.Authorization },
             data:{newTAccount,newTPassword,newTName,newTeacherID}
         }).then ( (res) => {
-          console.log(0);
           console.log(res);
         }).catch( (err) => {
-          console.log(1);
           console.log(err);
         })
         } 
