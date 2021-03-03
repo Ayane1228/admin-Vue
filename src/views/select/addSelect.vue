@@ -18,13 +18,6 @@
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="10">
-            <el-form-item label="指导教师" prop="selectForm" >
-              <el-input v-model="selectForm.teacherName" disabled></el-input>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="5">
             <el-form-item label="教师电话" prop="selectForm" >
               <el-input v-model="selectForm.teacherPhone" disabled></el-input>
@@ -159,18 +152,24 @@ export default {
         });
       },
       addNewSelect(selectForm){     
+        const newTitle = this.$data.selectForm.newTitle
+        const teacherName = this.$data.selectForm.teacherName
+        const newContent = this.$data.selectForm.textarea
         this.$refs.selectForm.validate((valid) => {
         const newMajor = this.$refs['zhuangye'].getCheckedNodes()[0].data.value
           if (valid || !newMajor) {
             this.success()
             const token = this.header
-            
-            // axios({
-            //   url:'http://localhost:18082/select/addSelect',
-            //   method:post,
-            //   headers:{ Authorization:token.Authorization },
-            //   data:{}
-            // })
+            axios({
+              url:'http://localhost:18082/select/addSelect',
+              method:'post',
+              headers:{ Authorization:token.Authorization },
+              data:{newTitle,teacherName,newMajor,newContent}
+            }).then( (res) => {
+              console.log(res);
+            }).catch( (err) => {
+              console.log(err);
+            })
           } else {
             this.fail()
             return false;
