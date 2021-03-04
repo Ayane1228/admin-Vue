@@ -92,6 +92,12 @@ export const asyncRoutes = [
         component: () => import('@/views//select/addSelect'),
         name: 'changeselect',
         meta: { title: '提交选题', icon: 'edit', roles: ['teacher'] }
+      },
+      {
+        path:'/select/myselect',
+        component: () => import('@/views//select/mySelect'),
+        name:'myselect',
+        meta:{ title:'选题管理',icon:'edit',roles:['teacher']}
       }
     ]
   }, 

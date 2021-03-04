@@ -181,7 +181,6 @@ export default {
       const that = this
       const dataForm = that.$data.selectForm
       const token = this.header
-      // 判断是否为管理员
             // 请求后端数据
       axios.get('http://localhost:18082/select/showSelect',{
             // 并保存token到请求头中
@@ -189,6 +188,7 @@ export default {
               Authorization:token.Authorization
             }
         }).then( (res) =>{
+          // 判断是否为管理员
           if (res.data == '管理员无权添加选题') {
             // 重定向
             window.location.href = 'http://localhost:9527/index.html#/selcet/errorselect'
