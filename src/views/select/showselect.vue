@@ -68,7 +68,12 @@
             label="确认选择"
             width="180">
             <template slot-scope="scope">
-              <el-button type="primary" @click="submit(scope)">确认选择</el-button>
+              <el-button 
+                  type="primary" 
+                  @click="submit(scope.row)" 
+                  :disabled="scope.row.istrue== '不可选' "
+                >确认选择
+              </el-button>
             </template>
             
           </el-table-column>
@@ -94,20 +99,33 @@ export default {
       }
   },
   methods:{
-      open(scope) {
-        console.log(row);
-        this.$alert(`是否选择${scope.row.title}为选题`, '确定选择', {
-          confirmButtonText: '确定',
-          callback: action => {
+    submit(row){
+      // 获取当前的token
+      const token = this.header
+      axios({
+        url:'http://localhost:18082/select/ifstudendtaccount',
+        method:'post',              
+        headers:{ Authorization:token.Authorization },
+        data:{ row }
+      }).then( (res) => {
+        console.log(res.data);
+        if ( res.data == 0 ){
             this.$message({
-              type: 'info',
-              message: `action: ${ action }`
-            });
-          }
-        });
-      },
-    submit(){
-      this.open()
+              type: 'error',
+              message: `非学生账号无法选择选题`
+            })
+        } else {
+            // 成功提示
+              this.$message({
+                type: 'success',
+                message: `选择成功`
+              });
+        }
+      }).catch( (err) => {
+        this.open()
+        console.log(err);
+      })
+      
     }
   },
   beforeMount(){
