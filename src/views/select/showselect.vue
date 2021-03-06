@@ -99,35 +99,26 @@ export default {
       }
   },
   methods:{
-    submit(row){
-      // 获取当前的token
+    submit(row) {
       const token = this.header
       axios({
-        url:'http://localhost:18082/select/ifstudendtaccount',
-        method:'post',              
+        url:'http://localhost:18082/select/choiceSelect',
+        method:'post',
         headers:{ Authorization:token.Authorization },
-        data:{ row }
+        data:{row}
       }).then( (res) => {
-        console.log(res.data);
-        if ( res.data == 0 ){
-            this.$message({
-              type: 'error',
-              message: `非学生账号无法选择选题`
-            })
-        } else {
-            // 成功提示
-              this.$message({
-                type: 'success',
-                message: `选择成功`
-              });
-        }
+        if (res.data == '不能选题') {
+          console.log(1);
+          this.$message.error('选题失败')        
+          } else {
+            this.$message.success('选题成功，请刷新页面')
+          }
       }).catch( (err) => {
-        this.open()
         console.log(err);
       })
-      
     }
   },
+  // 获取选题信息
   beforeMount(){
       const that = this
       const token = this.header
