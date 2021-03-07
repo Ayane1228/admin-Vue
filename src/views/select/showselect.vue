@@ -99,26 +99,24 @@ export default {
       }
   },
   methods:{
+    // 选题
     submit(row) {
+      this.$message.success('选择成功,请刷新页面')
       const token = this.header
       axios({
         url:'http://localhost:18082/select/choiceSelect',
         method:'post',
         headers:{ Authorization:token.Authorization },
-        data:{row}
+        data:{ row }
       }).then( (res) => {
-        if (res.data == '不能选题') {
-          console.log(1);
-          this.$message.error('选题失败')        
-          } else {
-            this.$message.success('选题成功，请刷新页面')
-          }
+        console.log(res);
       }).catch( (err) => {
         console.log(err);
       })
     }
   },
-  // 获取选题信息
+
+  // 获取选题信信息
   beforeMount(){
       const that = this
       const token = this.header
@@ -135,6 +133,30 @@ export default {
               that.$data.allSelect.push(item)
             })
       }).catch( err => { console.log(err); })
+  },
+
+  // 判断是否为学生账号,验证修改前端 istrue的值
+  created(){
+      const that = this
+      const token = this.header
+      axios({
+        url:'http://localhost:18082/select/isStudent',
+        headers:{ Authorization:token.Authorization }
+      }).then( (res) => {
+        console.log(res);
+        const role = res.data.data[0].role
+        if( role != 'student') {
+          setTimeout(function(){
+            that.$data.allSelect.forEach((item,index,arr) => {
+            item.istrue = '不可选'
+          })
+          },250)
+        } else{
+          console.log('可以选择');
+        }
+      }).catch( (err) => {
+        console.log(err);
+      })
   }
 }
 </script>

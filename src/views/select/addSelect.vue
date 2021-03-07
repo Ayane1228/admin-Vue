@@ -122,11 +122,11 @@ export default {
           }]
           }]
         },
+        // 前端验证规则
         rules:{
           newTitle:[ { required: true, message: '请输入选题名称', trigger: 'blur' },
                   { min: 3, message: '长度最少为3个字符', trigger: 'blur' } ]               
         }
-
       }
     },
     //计算属性获取token
@@ -145,12 +145,14 @@ export default {
           type: 'success'
         });
       },
+      // 提交失败
       fail(){
           this.$message({
           message: '提交失败',
           type: 'error'
         });
       },
+      // 提交新选题
       addNewSelect(selectForm){     
         const newTitle = this.$data.selectForm.newTitle
         const teacherName = this.$data.selectForm.teacherName
@@ -177,6 +179,7 @@ export default {
         });   
       }
     },
+    // 判断账号是否是管理员账号，是则重定向
     beforeMount(){
       const that = this
       const dataForm = that.$data.selectForm
