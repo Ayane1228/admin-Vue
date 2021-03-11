@@ -71,7 +71,7 @@
               <el-button 
                   type="primary" 
                   @click="submit(scope.row)" 
-                  :disabled="scope.row.istrue== '不可选' "
+                  :disabled="scope.row.istrue== '不可选'"
                 >确认选择
               </el-button>
             </template>

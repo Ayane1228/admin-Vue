@@ -3,8 +3,9 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-/* Layout */
+/* 懒加载 */
 import Layout from '@/layout'
+/* 静态路由 */
 export const constantRoutes = [
   {
     path: '/redirect',
@@ -38,11 +39,12 @@ export const constantRoutes = [
     hidden: true
   }
 ]
+/* 动态路由 */
 export const asyncRoutes = [  
   // 公告
   {
       // 路径
-      path: '/',
+      path: '/notice',
       // 对应的组件：Layout外面的部分
       component: Layout,
       // 重定向

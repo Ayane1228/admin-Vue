@@ -87,7 +87,7 @@ export default {
               that.$data.list.push(item)
             })
       }).catch( err => { console.log(err); })
-  },
+  }
 }
 </script>
 

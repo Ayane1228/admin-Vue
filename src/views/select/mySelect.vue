@@ -12,23 +12,24 @@
             width="180">
           </el-table-column>
           <el-table-column
-            prop="needMajor"
+            prop="major"
             label="所需专业"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="studentName"
+            prop="truename"
             label="当前选择学生姓名"
             width="180">
           </el-table-column>
           <el-table-column
-            prop="submit"
+            prop="show"
             label="查看学生信息"
             width="180">
             <template slot-scope="scope">
               <el-button 
                   type="primary" 
-                  @click="submit(scope.row)" 
+                  @click="show(scope.row)" 
+                  :disabled="scope.row.truename== null"
                 >查看学生信息
               </el-button>
             </template>
@@ -41,6 +42,7 @@
               <el-button 
                   type="primary" 
                   @click="submit(scope.row)" 
+                  :disabled="scope.row.truename== null"
                 >确认选择该学生
               </el-button>
             </template>
@@ -67,36 +69,27 @@ export default {
       }
   },
   methods:{
-  //   // 选题
-  //   submit(row) {
-  //     this.$message.success('选择成功,请刷新页面')
-  //     const token = this.header
-  //     axios({
-  //       // url:'http://localhost:18082/select/choiceSelect',
-  //       method:'post',
-  //       headers:{ Authorization:token.Authorization },
-  //       data:{ row }
-  //     }).then( (res) => {
-  //       console.log(res);
-  //     }).catch( (err) => {
-  //       console.log(err);
-  //     })
-  //   }
+    show(row){
+      console.log(row.truename);
+    }
   },
-
-  // 获取选题信息
+  // 获取我的选题信息
   beforeMount(){
       const that = this
       const token = this.header
-      axios.get('http://localhost:18082/select/teachersSelect',{
-            // 并保存token到请求头中
-            headers:{
-              Authorization:token.Authorization
-            }
-        })
-          .then( function (res) {
-            console.log(res);
-      }).catch( err => { console.log(err); })
+      axios.get('http://localhost:18082/select/teachersSelect',
+        {
+          headers:{ Authorization:token.Authorization}
+        }
+      ).then( (res) => {
+            //保存到data中
+            res.data.data.map( (item) => {
+              // 显示数据
+              that.$data.allSelect.push(item)
+            })
+      }).catch( (err) => {
+        console.log(err);
+      })
   }
 }
 </script>
