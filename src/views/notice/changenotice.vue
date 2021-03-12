@@ -77,10 +77,6 @@ export default {
       }
     },
     methods:{
-      //刷新页面
-      reload(){
-        window.location.reload();
-      },
       // 展示详情
       showContent(index,row){
         this.$alert(this.$data.list[index].noticeContent, this.$data.list[index].noticeTitle, {
@@ -152,8 +148,7 @@ export default {
                 type: 'success',
                 message: '发布成功,标题为: ' + value
               }).then( 
-                // 刷新页面
-                setTimeout(this.reload(),50000)
+                console.log('发布成功')
               ).catch((err) => {
               this.$message({
                 type: 'error',

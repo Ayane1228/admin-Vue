@@ -75,7 +75,6 @@
                 >确认选择
               </el-button>
             </template>
-            
           </el-table-column>
       </el-table>
     </div>
@@ -117,7 +116,7 @@ export default {
   },
 
   // 获取选题信信息
-  beforeMount(){
+  created(){
       const that = this
       const token = this.header
       axios.get('http://localhost:18082/select/allSelect',{
@@ -136,14 +135,13 @@ export default {
   },
 
   // 判断是否为学生账号,验证修改前端 istrue的值
-  created(){
+  mounted(){
       const that = this
       const token = this.header
       axios({
         url:'http://localhost:18082/select/isStudent',
         headers:{ Authorization:token.Authorization }
       }).then( (res) => {
-        console.log(res);
         const role = res.data.data[0].role
         if( role != 'student') {
           setTimeout(function(){

@@ -41,20 +41,6 @@
         </el-col>
       </el-form-item>
 
-      <el-form-item label="选题信息">
-        <el-col :span="10">
-        <el-select v-model="value" placeholder="选题题目" id="option">
-          <el-option
-              v-for="item in form.options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-          </el-option>
-        </el-select>
-        <el-button type="primary" icon="el-icon-search" circle id="showMore" ></el-button>
-        </el-col>
-      </el-form-item>
-
       <el-form-item>
         <el-button type="primary" @click="onSubmit">立即保存</el-button>
       </el-form-item>
@@ -76,11 +62,7 @@ export default {
           phone:null,
           email:null,
           office:null,
-          teacherrank:null,
-          options: [{
-          // value: '选项1',
-          // label: '黄金糕'
-        }],
+          teacherrank:null
         }
       }
   },    
@@ -167,7 +149,6 @@ export default {
             dataForm.email = result.email
             dataForm.office = result.office
             dataForm.teacherrank = result.teacherrank
-            document.getElementById('option').placeholder = '管理员无法提交选题'       
           } else {
               that.$data.flag = 1
               const result = res.data.data[0]
@@ -181,8 +162,7 @@ export default {
         }).catch( (err) => {
           console.log(err);
         })
-
-  },
+  }
 }
 </script>
 

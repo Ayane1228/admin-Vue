@@ -44,7 +44,7 @@ export const asyncRoutes = [
   // 公告
   {
       // 路径
-      path: '/notice',
+      path: '/',
       // 对应的组件：Layout外面的部分
       component: Layout,
       // 重定向
@@ -57,7 +57,7 @@ export const asyncRoutes = [
           // 懒加载
           component: () => import('@/views//notice/shownotice'),
           name: 'shownotice',
-          meta: { title: '最新通知', icon: 'el-icon-position' }
+          meta: { title: '最新通知', icon: 'el-icon-position'}
         },
         {
           path: '/notice/changenotice',
