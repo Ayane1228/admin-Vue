@@ -96,10 +96,10 @@ export const asyncRoutes = [
         meta: { title: '提交选题', icon: 'edit', roles: ['teacher'] }
       },
       {
-        path:'/select/myselect',
-        component: () => import('@/views//select/mySelect'),
-        name:'myselect',
-        meta:{ title:'我的选题（教师）',icon:'edit',roles:['teacher']}
+        path:'/select/teacherselect',
+        component: () => import('@/views//select/teacherSelect'),
+        name:'teacherselect',
+        meta:{ title:'我的可选选题（教师）',icon:'edit',roles:['teacher']}
       }
     ]
   }, 

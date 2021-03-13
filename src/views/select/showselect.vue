@@ -26,7 +26,7 @@
                   <span>{{ props.row.email }}</span>
                 </el-form-item>
                 <el-form-item label="所需专业">
-                  <span>{{ props.row.major }}</span>
+                  <span>{{ props.row.needmajor }}</span>
                 </el-form-item>
                 <el-form-item label="课题描述">
                   <span>{{ props.row.content }}</span>
