@@ -50,7 +50,7 @@
             width="180">
           </el-table-column>
           <el-table-column
-            prop="major"
+            prop="needmajor"
             label="专业要求"
             width="180">
           </el-table-column>
@@ -98,25 +98,42 @@ export default {
       }
   },
   methods:{
-    // 选题
+    // 学生选题
     submit(row) {
-      this.$message.success('选择成功,请刷新页面')
-      const token = this.header
-      axios({
-        url:'http://localhost:18082/select/choiceSelect',
-        method:'post',
-        headers:{ Authorization:token.Authorization },
-        data:{ row }
-      }).then( (res) => {
-        console.log(res);
-      }).catch( (err) => {
-        console.log(err);
-      })
-    }
+          this.$confirm(`注意一个学生一次只选择一个选题，这次将选择选题: ${row.title}, 是否继续?`, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          const token = this.header
+          axios({
+            url:'http://localhost:18082/select/choiceSelect',
+            method:'post',
+            headers:{ Authorization:token.Authorization },
+            data:{ row }
+          }).then((res) => {
+            if(res.data == '不能重复选题' ){
+              this.$message({
+                type:'error',
+                message:`${res.data}`
+              })
+            } else {
+              this.$message({
+              type: 'success',
+              message:`${res.data},请刷新页面`
+            });
+            } 
+          }).catch((err) => {
+            console.log(err);
+          })
+        }).catch(() => {
+          this.$message.info('取消选题')       
+        })
+      }
   },
 
   // 获取选题信信息
-  created(){
+  mounted(){
       const that = this
       const token = this.header
       axios.get('http://localhost:18082/select/allSelect',{
@@ -135,7 +152,7 @@ export default {
   },
 
   // 判断是否为学生账号,验证修改前端 istrue的值
-  mounted(){
+  beforeMount(){
       const that = this
       const token = this.header
       axios({
@@ -150,7 +167,7 @@ export default {
           })
           },250)
         } else{
-          console.log('可以选择');
+          console.log('学生账号，可以选择');
         }
       }).catch( (err) => {
         console.log(err);
