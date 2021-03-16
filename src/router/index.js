@@ -99,13 +99,13 @@ export const asyncRoutes = [
         path:'/select/teacherselect',
         component: () => import('@/views//select/teacherSelect'),
         name:'teacherselect',
-        meta:{ title:'我的可选选题（教师）',icon:'edit',roles:['teacher']}
+        meta:{ title:'我的选题（教师）',icon:'edit',roles:['teacher']}
       },
       {
         path:'/select/studentselect',
         component: () => import('@/views//select/studentSelect'),
         name:'studentselect',
-        meta:{ title:'选题结果',icon:'edit',roles:['student']}
+        meta:{ title:'我的选题（学生）',icon:'edit',roles:['student']}
       }
     ]
   }, 

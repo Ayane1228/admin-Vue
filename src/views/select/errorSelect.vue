@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h2>管理员无法提交选题</h2>
+        <h2>管理员无权访问相关页面</h2>
     </div>
 </template>
 <style>

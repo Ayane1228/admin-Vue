@@ -52,8 +52,18 @@
           <!-- 当前选择姓名 -->
           <el-table-column
             prop="truename"
-            label="当前选择学生姓名"
-            width="180">
+            label="当前学生姓名"
+            width="120">
+          </el-table-column>
+          <!-- 是否最终确定 -->
+          <el-table-column
+            prop="pick"
+            label="是否选中"
+            width="120">
+            <template slot-scope="scope">
+            <!-- 三元运算符定义tag的内容 -->
+            <el-tag :type="scope.row.pick=='已确认' ? 'success' : 'danger'" >{{scope.row.pick}}</el-tag>
+            </template>
           </el-table-column>
           <!-- 查看学生信息 -->
           <el-table-column
@@ -78,7 +88,7 @@
               <el-button 
                   type="primary" 
                   @click="submit(scope.row)" 
-                  :disabled="scope.row.truename== null"
+                  :disabled="scope.row.truename == null || scope.row.pick == '已确认'"
                 >确认选择
               </el-button>
             </template>
@@ -91,7 +101,7 @@
             <template slot-scope="scope">
               <el-button 
                   type="danger" 
-                  :disabled="scope.row.truename== null"
+                  :disabled="scope.row.truename== null || scope.row.pick == '已确认'"
                   @click="cancel(scope.row)" 
                 >取消选择
               </el-button>
@@ -124,7 +134,7 @@ export default {
       allSelect:[]
     }
   },
-  //计算属性获取token
+  //获取token
   computed:{
     header(){
       return {
@@ -139,7 +149,7 @@ export default {
       let $table = this.$refs.topicTable
       $table.toggleRowExpansion(row)
     },
-    // 取消选择：拒绝学生
+    // 取消选择
     cancel(row){
         this.$confirm(`此操作将取消当前选择学生：${row.truename}。选中的课题: ${row.title}, 是否继续?`, '提示', {
           confirmButtonText: '确定',
@@ -169,7 +179,7 @@ export default {
           });          
         });
     },
-    // 确认选择
+    // 确认选择学生
     submit(row){
         this.$confirm(`将选择当前选择学生：${row.truename}。选中的课题: ${row.title}, 是否继续?`, '提示', {
           confirmButtonText: '确定',

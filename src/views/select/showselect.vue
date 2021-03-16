@@ -98,7 +98,7 @@ export default {
       }
   },
   methods:{
-    // 学生选题
+    // 学生确认选题
     submit(row) {
           this.$confirm(`注意一个学生一次只选择一个选题，这次将选择选题: ${row.title}, 是否继续?`, '提示', {
           confirmButtonText: '确定',
