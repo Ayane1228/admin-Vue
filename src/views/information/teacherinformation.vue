@@ -2,7 +2,10 @@
   <div class="mian">
     <h3>教师个人信息</h3>
     <!-- 教师个人信息 -->
-    <el-form ref="form" :model="form" label-width="80px">
+    <el-form 
+      ref="form" 
+      :rules="rules"
+      :model="form" label-width="80px">
       <!-- 姓名,教师无法修改 -->
       <el-form-item label="姓名">
         <el-col :span="10">
@@ -20,13 +23,13 @@
         </el-col>
       </el-form-item>
       <!-- 联系方式 -->
-      <el-form-item label="联系电话">
+      <el-form-item label="联系电话" prop="phone">
           <el-col :span="10">
             <el-input v-model="form.phone"></el-input>
           </el-col>
       </el-form-item>
       <!-- 邮箱 -->
-      <el-form-item label="电子邮箱">
+      <el-form-item label="电子邮箱" prop="email">
         <el-col :span="10">
           <el-input v-model="form.email"></el-input>
         </el-col>
@@ -69,6 +72,38 @@ import { getToken } from '@/utils/auth'
 
 export default {
       data() {
+      // 自定义规则-手机
+      var checkPhone = (rule, value, callback) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^[1][3-8][0-9]{9}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入正确手机号'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+      };
+      // 自定义规则-邮箱
+      var checkEmail = (rule, value, callback) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入正确邮箱'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+      };
       return {
         // flag 0为管理员,1为教师
         flag:null,
@@ -80,62 +115,62 @@ export default {
           email:null,
           office:null,
           teacherrank:null
-        }
+        },
+        rules: {
+            phone:[{ validator: checkPhone, trigger: 'blur'  }],
+            email:[{ validator: checkEmail, trigger: 'blur'  }]
+         }
       }
   },    
   methods:{
-    // 提示保存成功
-    change() {
-        this.$message({
-          message: '保存成功,请刷新页面',
-          type: 'success'
-        });
-      },
-    // 管理员账号提示
-    adminAccount(){
-      this.$message({
-        message: '管理员账号',
-        center: true
-      });
-    },
     // 提交信息
     onSubmit(){
-      this.change()
-      const token = this.header
-      // 管理员
-      if (this.$data.flag === 0)  {
-        const trueName = this.$data.form.truename
-        const newPhone = this.$data.form.phone
-        const newEmail = this.$data.form.email
-        const newOffice = this.$data.form.office
-        axios({
-          url:'http://localhost:18082/information/adminChangeInf',
-          method:"post",
-          headers:{ Authorization:token.Authorization },
-          data:{ trueName,newPhone,newEmail,newOffice }
-        }).then( (res) => {
-          console.log(res);
-        }).catch( (err) => {
-          console.log(err);
-        })
-      } else {
-      // 教师
-        const trueName = this.$data.form.truename
-        const newPhone = this.$data.form.phone
-        const newEmail = this.$data.form.email
-        const newOffice = this.$data.form.office
-        const newTeacherrank = this.$data.form.teacherrank
-        axios({
-          url:'http://localhost:18082/information/teacherChangeInf',
-          method:"post",
-          headers:{ Authorization:token.Authorization },
-          data:{ trueName,newPhone,newEmail,newOffice,newTeacherrank }
-        }).then( (res) => {
-          console.log(res);
-        }).catch( (err) => {
-          console.log(err);
-        })
-      }
+        const token = this.header
+        this.$refs[form].validate( (valid) => {
+        // 再次前端验证
+        if (valid) {
+          // 判断管理员还是教师
+          // 管理员
+          if (this.$data.flag === 0)  {
+            const trueName = this.$data.form.truename
+            const newPhone = this.$data.form.phone
+            const newEmail = this.$data.form.email
+            const newOffice = this.$data.form.office
+            axios({
+              url:'http://localhost:18082/information/adminChangeInf',
+              method:"post",
+              headers:{ Authorization:token.Authorization },
+              data:{ trueName,newPhone,newEmail,newOffice }
+            }).then( (res) => {
+              this.$message.success('保存成功,请刷新页面');
+              console.log(res);
+            }).catch( (err) => {
+              console.log(err);
+            })
+          } else {
+          // 教师
+            const trueName = this.$data.form.truename
+            const newPhone = this.$data.form.phone
+            const newEmail = this.$data.form.email
+            const newOffice = this.$data.form.office
+            const newTeacherrank = this.$data.form.teacherrank
+            axios({
+              url:'http://localhost:18082/information/teacherChangeInf',
+              method:"post",
+              headers:{ Authorization:token.Authorization },
+              data:{ trueName,newPhone,newEmail,newOffice,newTeacherrank }
+            }).then( (res) => {
+              console.log(res);
+            }).catch( (err) => {
+              console.log(err);
+            })
+          }
+        } else {
+          this.$message.error('提交失败')
+          return false;
+          }
+        }
+      )
     },
     // 修改密码
     changeTeacherPassword(){
@@ -144,10 +179,7 @@ export default {
           cancelButtonText: '取消',
         }).then(({ value }) => {
           if( value.length < 4 ){
-            this.$message({
-              type: 'error',
-              message: '新密码必须大于四位'
-            });
+            this.$message.error('新密码必须大于四位')
           } else {
             const token = this.header
             axios({
@@ -163,10 +195,7 @@ export default {
            })
           }
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消输入'
-          });       
+          this.$message.info('取消输入')       
         });   
     }
   },
@@ -190,10 +219,13 @@ export default {
               Authorization:token.Authorization
             }
         }).then( (res) =>{
-          // 判断是否为管理员
+          // 判断管理员还是教师账号
           if (res.data.msg == '获取admin信息成功') {
             that.$data.flag = 0
-            this.adminAccount()
+            this.$message({
+              message: '管理员账号',
+              center: true
+            });
             const result = res.data.data[0]
             dataForm.truename = result.truename
             dataForm.teacherID = result.teacherID

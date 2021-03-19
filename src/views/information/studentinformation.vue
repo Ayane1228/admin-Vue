@@ -2,7 +2,10 @@
   <div class="mian">
     <h3>学生个人信息</h3>
     <!-- 学生个人信息表格 -->
-    <el-form ref="form" :model="form" label-width="80px">
+    <el-form ref="form" 
+      :model="form" 
+      label-width="80px" 
+      :rules="rules">
       <!-- 姓名 -->
       <el-form-item label="姓名">
         <el-col :span="10">
@@ -18,13 +21,13 @@
         </el-col>
       </el-form-item>
       <!-- 电话 -->
-      <el-form-item label="联系电话">
+      <el-form-item label="联系电话" prop="phone">
           <el-col :span="10">
             <el-input v-model="form.phone"></el-input>
           </el-col>
       </el-form-item>
       <!-- 电子邮箱 -->
-      <el-form-item label="电子邮箱">
+      <el-form-item label="电子邮箱" prop="email">
         <el-col :span="10">
           <el-input v-model="form.email"></el-input>
         </el-col>
@@ -66,6 +69,38 @@ import { getToken } from '@/utils/auth'
 
 export default {
       data() {
+      // 自定义规则
+      var checkPhone = (rule, value, callback) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^[1][3-8][0-9]{9}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入正确手机号'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+      };
+      // 自定义规则邮箱
+      var checkEmail = (rule, value, callback) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入正确邮箱'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+      };
       return {
         form: {
           truename:null,
@@ -74,35 +109,40 @@ export default {
           email:null,
           major:null,
           introduction:null
-        }
+        },
+         rules: {
+            phone:[{ validator: checkPhone, trigger: 'blur'  }],
+            email:[{ validator: checkEmail, trigger: 'blur'  }]
+         }
       }
   },    
   methods:{
-    // 提示保存成功
-    change() {
-        this.$message({
-          message: '保存成功',
-          type: 'success'
-        });
-    },
     // 更新信息 
     onSubmit(){
-      this.change()
-      const token = this.header
-      const trueName = this.$data.form.truename
-      const newPhone = this.$data.form.phone
-      const newEmail = this.$data.form.email
-      const newIntroduction = this.$data.form.introduction
-        axios({
-          url:'http://localhost:18082/information/studentChangeInf',
-          method:"post",
-          headers:{ Authorization:token.Authorization },
-          data:{ trueName,newPhone,newEmail,newIntroduction }
-        }).then( (res) => {
-          console.log(res);
-        }).catch( (err) => {
-          console.log(err);
-        })
+        this.$refs[form].validate( (valid) => {
+        // 再次前端验证
+        if (valid) {
+          const token = this.header
+          const trueName = this.$data.form.truename
+          const newPhone = this.$data.form.phone
+          const newEmail = this.$data.form.email
+          const newIntroduction = this.$data.form.introduction
+            axios({
+              url:'http://localhost:18082/information/studentChangeInf',
+              method:"post",
+              headers:{ Authorization:token.Authorization },
+              data:{ trueName,newPhone,newEmail,newIntroduction }
+            }).then( (res) => {
+              this.$message.success('保存成功');
+            }).catch( (err) => {
+              console.log(err);
+            })
+        } else {
+          this.$message.error('提交失败')
+          return false;
+          }
+        }
+      )
     },
     // 学生修改密码
     changeStudentPassword(){
@@ -134,7 +174,7 @@ export default {
             type: 'info',
             message: '取消输入'
           });       
-        });      
+        })
     }
   },
   //计算属性获取token

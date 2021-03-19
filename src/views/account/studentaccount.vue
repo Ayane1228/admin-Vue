@@ -221,7 +221,7 @@ import { getToken } from '@/utils/auth'
         // 验证规则
         rules:{
           newAccount:[  { required: true, message: '请输入账号名', trigger: 'blur' },
-                        {validator: checkAccount, trigger: 'blur'  }],
+                        { validator: checkAccount, trigger: 'blur'  }],
           newPassword:[ { required: true, message: '请输入密码', trigger: 'blur'  },
                         { min: 4, message: '密码长度最小为4个字符', trigger: 'blur' }],
           newName:[{  required: true, message: '请输入学生姓名', trigger: 'blur'  }],
@@ -241,7 +241,6 @@ import { getToken } from '@/utils/auth'
         this.$refs[newStudentForm].validate((valid) => {
         // 通过前端验证
         if (valid) {
-        // this.$message.success('添加账号成功，请刷新页面')
         const token = this.header
         const newSAccount = this.$data.newStudentForm.newAccount
         const newSPassword = this.$data.newStudentForm.newPassword
@@ -266,11 +265,8 @@ import { getToken } from '@/utils/auth'
         } 
         //不符合rules
         else {
-          this.$message({
-          message: '提交失败',
-          type: 'error'
-        })
-            return false;
+          this.$message.error('提交失败')
+          return false;
           }
         });
       },
