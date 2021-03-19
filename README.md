@@ -111,3 +111,31 @@ src文件下：
     └─select
 ```
 
+# 使用全局地址VUE_APP_BASE_API
+
+## 建立.env系列文件
+
+首先我们在根目录新建3个文件，分别为.env.development，.env.production，.env.test
+注意文件是只有后缀的。
+
+.env.development 模式用于serve，开发环境，就是开始环境的时候会引用这个文件里面的配置
+
+.env.production模式用于build，线上环境。
+
+.env.test 测试环境
+
+## 更改package.json文件
+
+```js
+ "scripts": {
+    "dev": "vue-cli-service serve",
+    "test": "vue-cli-service serve --mode test",
+    "build": "vue-cli-service build",
+    "build:test": "vue-cli-service build --mode test",
+    "lint": "vue-cli-service lint"
+  },
+```
+
+## 使用
+
+当需要用到该变量是可以用`process.env.VUE_APP_BASE_API`进行取值。

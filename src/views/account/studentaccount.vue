@@ -3,47 +3,75 @@
     <!-- 添加新学生 -->
     <div class="top">
       <h3>添加新学生账号</h3>
+      <!-- 新账号部分 -->
       <div class="topMain">
-        <el-form label-width="80px" :model="newStudentForm" :rules="rules" ref="newStudentForm" class="demo-form-inline">
-        <el-col :span="5">
-          <el-form-item label="账号" prop="newAccount" >
-            <el-input v-model="newStudentForm.newAccount" placeholder="账号"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="密码" prop="newPassword" >
-            <el-input v-model="newStudentForm.newPassword" placeholder="密码" show-password></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="姓名"  prop="newName">
-            <el-input v-model="newStudentForm.newName" placeholder="姓名"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="学号"  prop="newStudentID">
-            <el-input v-model="newStudentForm.newStudentID" placeholder="学号"></el-input>
-          </el-form-item>        
-        </el-col>
-        <el-col :span="5">
-          <el-form-item label="班号"  prop="newStudentClassID">
-            <el-input v-model="newStudentForm.newStudentClassID" placeholder="班号"></el-input>
-          </el-form-item>          
-        </el-col>
-        <el-col :span="5" class="major">
-          <el-form-item label="专业" >
-            <el-cascader
-            ref="zhuangye"
-            placeholder="专业"
-            :options="newStudentForm.options"
-            filterable></el-cascader>
-          </el-form-item>
-        </el-col>
-        <el-col :span="11">
-          <el-form-item>
-            <el-button type="primary" @click="addNewStudent('newStudentForm')">确认添加</el-button>
-          </el-form-item>
-        </el-col>
+        <el-form 
+          label-width="80px" 
+          :model="newStudentForm" 
+          :rules="rules" 
+          ref="newStudentForm" 
+          class="demo-form-inline">
+          <!-- 账号 -->
+          <el-col :span="5">
+            <el-form-item label="账号" prop="newAccount" >
+              <el-input v-model="newStudentForm.newAccount" placeholder="账号"></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- 密码 -->
+          <el-col :span="5">
+            <el-form-item label="密码" prop="newPassword" >
+              <el-input v-model="newStudentForm.newPassword" placeholder="密码" show-password></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- 姓名 -->
+          <el-col :span="5">
+            <el-form-item label="姓名"  prop="newName">
+              <el-input v-model="newStudentForm.newName" placeholder="姓名"></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- 学号 -->
+          <el-col :span="5">
+            <el-form-item label="学号"  prop="newStudentID">
+              <el-input 
+                v-model.number="newStudentForm.newStudentID" 
+                placeholder="学号">
+              </el-input>
+            </el-form-item>        
+          </el-col>
+          <!-- 班号 -->
+          <el-col :span="5">
+            <el-form-item label="班号"  prop="newStudentClassID">
+              <el-input 
+                v-model.number="newStudentForm.newStudentClassID" 
+                placeholder="班号">
+              </el-input>
+            </el-form-item>          
+          </el-col>
+          <!-- 专业 -->
+          <el-col :span="5" class="major">
+            <el-form-item label="专业" prop="major">
+              <el-cascader
+                ref="zhuangye"
+                :options="newStudentForm.options"
+                placeholder="专业"
+                v-model="options"
+                :props="props"
+                expand-trigger="hover"
+                filterable
+                clearable>
+              </el-cascader>
+            </el-form-item>
+          </el-col>
+          <!-- 添加按钮 -->
+          <el-col :span="11">
+            <el-form-item>
+              <el-button 
+                type="primary" 
+                @click="addNewStudent('newStudentForm')">
+                确认添加
+              </el-button>
+            </el-form-item>
+          </el-col>
       </el-form>
       </div>    
     </div>
@@ -53,7 +81,7 @@
     <el-table
     :data="tableData"
     style="width: 100%">
-    <!-- 下拉部分 -->
+    <!-- 手风琴部分 -->
     <el-table-column type="expand">
       <template slot-scope="props">
         <el-form label-position="left" inline class="demo-table-expand">
@@ -87,6 +115,7 @@
         </el-form>
       </template>
     </el-table-column>
+    <!-- 主体部分 -->
     <!-- 账号 -->
     <el-table-column
         label="账号名"
@@ -102,6 +131,7 @@
         label="姓名"
         prop="truename">
     </el-table-column>
+    <!-- 按钮：修改密码，删除账号 -->
     <el-table-column>
           <template slot-scope="scope">
             <el-button 
@@ -129,14 +159,31 @@ import axios from 'axios'
 import { getToken } from '@/utils/auth'
   export default {
     data() {
+      // 自定义规则
+        var checkAccount = (rule, value, callback) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^[0-9a-zA-Z_]{1,}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入数字、字母、下划线'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+        };
       return {
+        // 默认数据
         newStudentForm: {
           newAccount: null,
           newPassword: null,
           newName:null,
           newStudentID:null,
           newStudentClassID:null,  
-          //选择专业       
+          //专业选项       
           options: [{
           value: '信息工程学院',
           label: '信息工程学院',
@@ -173,28 +220,28 @@ import { getToken } from '@/utils/auth'
         },
         // 验证规则
         rules:{
-          newAccount:[{ required: true, message: '请输入账号名', trigger: 'blur' }],
-          newPassword:[
-            {required: true, message: '请输入密码', trigger: 'blur'},
-            { min: 4, message: '密码长度最小为4个字符', trigger: 'blur' }
-          ],
-          newName:[{required: true, message: '请输入学生姓名', trigger: 'blur'}],
-          newStudentID:[{required: true, message: '请输入学生学号', trigger: 'blur'}],
-          newStudentClassID:[{required: true, message: '请输入学生班号', trigger: 'blur'}]
+          newAccount:[  { required: true, message: '请输入账号名', trigger: 'blur' },
+                        {validator: checkAccount, trigger: 'blur'  }],
+          newPassword:[ { required: true, message: '请输入密码', trigger: 'blur'  },
+                        { min: 4, message: '密码长度最小为4个字符', trigger: 'blur' }],
+          newName:[{  required: true, message: '请输入学生姓名', trigger: 'blur'  }],
+          newStudentID:[  { required: true, message: '请输入学生学号', trigger: 'blur' },
+                          { type: 'number', message: '学号必须为数字'}  ],
+          newStudentClassID:[ { required: true, message: '请输入学生班号', trigger: 'blur'  },
+                              { type: 'number', message: '班号必须为数字'} ]
         },
+        // 下方数据
         tableData: []
       }
     },
     methods:{
       // 添加账号
       addNewStudent(newStudentForm) {
+        // 再次验证
         this.$refs[newStudentForm].validate((valid) => {
         // 通过前端验证
         if (valid) {
-          this.$message({
-          message: '提交成功',
-          type: 'success'
-        })
+        // this.$message.success('添加账号成功，请刷新页面')
         const token = this.header
         const newSAccount = this.$data.newStudentForm.newAccount
         const newSPassword = this.$data.newStudentForm.newPassword
@@ -208,7 +255,11 @@ import { getToken } from '@/utils/auth'
             headers:{ Authorization:token.Authorization },
             data:{newSAccount,newSPassword,newSName,newStudentID,newStudentClassID,newStudentMajor}
         }).then ( (res) => {
-          console.log(res);
+            if(res.data.msg == '账号名已存在,请重新尝试') {
+              this.$message.error(`${res.data.msg}`)
+            } else {
+              this.$message.success('新增账号成功，请刷新页面')
+            }
         }).catch( (err) => {
           console.log(err);
         })
@@ -233,7 +284,7 @@ import { getToken } from '@/utils/auth'
           if( value.length < 4 ){
           this.$message({
             type: 'error',
-            message: '新密码不能小于四位'
+            message: '新密码必须大于四位'
           });
           } else {
           const token = this.header
@@ -269,17 +320,18 @@ import { getToken } from '@/utils/auth'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
           axios({
           url:'http://localhost:18082/studentAccount/deleteStudent',
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{deleteStudentAccountName}
         }).then((res) => {
-          console.log(res);
+            // 验证是否有选题结果
+          if (res.data.msg == '删除成功') {
+            this.$message.success('删除成功!请刷新页面')
+          } else {
+            this.$message.error('该生已存在选题结果，禁止删除账号！')            
+          }
         }).catch( (err) => {
           console.log(err);
         })}
@@ -314,7 +366,7 @@ import { getToken } from '@/utils/auth'
               that.$data.tableData.push(item)
             })
       }).catch( err => { console.log(err); })
-  },
+    }
   }
 </script>
 

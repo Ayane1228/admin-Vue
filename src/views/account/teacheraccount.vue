@@ -1,29 +1,38 @@
 <template>
   <div>
+    <!-- 添加部分 -->
     <div class="top">
       <h3>添加教师账号</h3>
       <div class="topMain">
         <el-form label-width="80px" :model="newTeacherForm" :rules="rules" ref="newTeacherForm" class="demo-form-inline">
+        <!-- 账号 -->
         <el-col :span="5">
           <el-form-item label="账号" prop="newAccount" >
             <el-input v-model="newTeacherForm.newAccount" placeholder="账号"></el-input>
           </el-form-item>
         </el-col>
+        <!-- 密码 -->
         <el-col :span="5">
           <el-form-item label="密码" prop="newPassword" >
             <el-input v-model="newTeacherForm.newPassword" placeholder="密码" show-password></el-input>
           </el-form-item>
         </el-col>
+        <!-- 姓名 -->
         <el-col :span="5">
           <el-form-item label="姓名"  prop="newName">
             <el-input v-model="newTeacherForm.newName" placeholder="姓名"></el-input>
           </el-form-item>
         </el-col>
+        <!-- 工号 -->
         <el-col :span="5">
           <el-form-item label="工号"  prop="newTeacherID">
-            <el-input v-model="newTeacherForm.newTeacherID" placeholder="工号"></el-input>
+            <el-input 
+              v-model.number="newTeacherForm.newTeacherID" 
+              placeholder="工号">
+            </el-input>
           </el-form-item>        
         </el-col>
+        <!-- 确认添加按钮 -->
         <el-col :span="11">
           <el-form-item>
             <el-button type="primary" @click="addNewTeacher('newTeacherForm')">确认添加</el-button>
@@ -35,73 +44,74 @@
     <!-- 数据展示部分 -->
     <div class="showTeacher">
       <h3>老师账号信息</h3>
-    <el-table
-    :data="tableData"
-    style="width: 100%">
-    <!-- 下拉部分 -->
-    <el-table-column type="expand">
-      <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="账号">
-            <span>{{ props.row.username }}</span>
-          </el-form-item>
-          <el-form-item label="密码">
-            <span>{{ props.row.password }}</span>
-          </el-form-item>
-          <el-form-item label="姓名">
-            <span>{{ props.row.truename }}</span>
-          </el-form-item>
-          <el-form-item label="工号">
-            <span>{{ props.row.teacherID }}</span>
-          </el-form-item>
-          <el-form-item label="联系电话">
-            <span>{{ props.row.phone}}</span>
-          </el-form-item>
-          <el-form-item label="电子邮箱">
-            <span>{{ props.row.email}}</span>
-          </el-form-item>
-          <el-form-item label="职称">
-            <span>{{ props.row.teacherrank}}</span>
-          </el-form-item>
-        </el-form>
-      </template>
-    </el-table-column>
-    <!-- 账号 -->
-    <el-table-column
-        label="账号名"
-        prop="username">
-    </el-table-column>
-    <!-- 密码 -->
-    <el-table-column
-        label="密码"
-        prop="password">
-    </el-table-column>
-    <!-- 姓名 -->
-    <el-table-column
-        label="姓名"
-        prop="truename">
-    </el-table-column>
-    <!-- 修改密码 -->
-    <el-table-column>
+      <el-table
+      :data="tableData"
+      style="width: 100%">
+      <!-- 手风琴部分 -->
+      <el-table-column type="expand">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="账号">
+              <span>{{ props.row.username }}</span>
+            </el-form-item>
+            <el-form-item label="密码">
+              <span>{{ props.row.password }}</span>
+            </el-form-item>
+            <el-form-item label="姓名">
+              <span>{{ props.row.truename }}</span>
+            </el-form-item>
+            <el-form-item label="工号">
+              <span>{{ props.row.teacherID }}</span>
+            </el-form-item>
+            <el-form-item label="联系电话">
+              <span>{{ props.row.phone}}</span>
+            </el-form-item>
+            <el-form-item label="电子邮箱">
+              <span>{{ props.row.email}}</span>
+            </el-form-item>
+            <el-form-item label="职称">
+              <span>{{ props.row.teacherrank}}</span>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <!-- 主要部分 -->
+      <!-- 账号 -->
+      <el-table-column
+          label="账号名"
+          prop="username">
+      </el-table-column>
+      <!-- 密码 -->
+      <el-table-column
+          label="密码"
+          prop="password">
+      </el-table-column>
+      <!-- 姓名 -->
+      <el-table-column
+          label="姓名"
+          prop="truename">
+      </el-table-column>
+      <!-- 修改密码 -->
+      <el-table-column>
+            <template slot-scope="scope">
+              <el-button 
+                type="primary" 
+                @click="changepassword(scope.$index, scope.row)">
+                修改密码
+              </el-button>
+            </template>
+      </el-table-column>
+      <!-- 删除账号-->
+      <el-table-column>
           <template slot-scope="scope">
             <el-button 
-              type="primary" 
-              @click="changepassword(scope.$index, scope.row)">
-              修改密码
+                type="danger" 
+                @click="deleteTeacher(scope.$index, scope.row)">
+                删除账号
             </el-button>
           </template>
-    </el-table-column>
-    <!-- 删除账号-->
-    <el-table-column>
-        <template slot-scope="scope">
-          <el-button 
-              type="danger" 
-              @click="deleteTeacher(scope.$index, scope.row)">
-              删除账号
-          </el-button>
-        </template>
-    </el-table-column>
-    </el-table>
+      </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -110,6 +120,22 @@ import axios from 'axios'
 import { getToken } from '@/utils/auth'
   export default {
     data() {
+      // 自定义规则-账号只能为数字，字母，下划线
+        var checkAccount = (rule, value, callback) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^[0-9a-zA-Z_]{1,}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入数字、字母、下划线'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+        };
       return {
         // 新增数据
         newTeacherForm: {
@@ -120,15 +146,16 @@ import { getToken } from '@/utils/auth'
         },
         // 验证规则
         rules:{
-          newAccount:[{ required: true, message: '请输入账号名', trigger: 'blur' }],
+          newAccount:[{ required: true, message: '请输入账号名', trigger: 'blur' },
+                      { validator: checkAccount, trigger: 'blur' }],
           newPassword:[
             {required: true, message: '请输入密码', trigger: 'blur'},
             { min: 4, message: '密码长度最小为4个字符', trigger: 'blur' }
           ],
-          newName:[
-            {required: true, message: '请输入教师姓名', trigger: 'blur'}
-          ],
-          newTeacherID:[{required: true, message: '请输入工号', trigger: 'blur'}],
+          newName:[{  required: true, message: '请输入教师姓名', trigger: 'blur'  }],
+          newTeacherID:[
+            { required: true, message: '请输入工号', trigger: 'blur'  },
+            { type: 'number', message: '工号必须为数字'}],
         },
         tableData: []
       }
@@ -139,32 +166,29 @@ import { getToken } from '@/utils/auth'
         this.$refs[newTeacherForm].validate((valid) => {
         // 通过前端验证
         if (valid) {
-          this.$message({
-          message: '提交成功',
-          type: 'success'
-        })
-        const token = this.header
-        const newTAccount = this.$data.newTeacherForm.newAccount
-        const newTPassword = this.$data.newTeacherForm.newPassword
-        const newTName = this.$data.newTeacherForm.newName
-        const newTeacherID = this.$data.newTeacherForm.newTeacherID
-        axios({
-            url:'http://localhost:18082/TeacherAccount/addTeacherAccount',
-            method:'post',
-            headers:{ Authorization:token.Authorization },
-            data:{newTAccount,newTPassword,newTName,newTeacherID}
-        }).then ( (res) => {
-          console.log(res);
-        }).catch( (err) => {
-          console.log(err);
-        })
+          const token = this.header
+          const newTAccount = this.$data.newTeacherForm.newAccount
+          const newTPassword = this.$data.newTeacherForm.newPassword
+          const newTName = this.$data.newTeacherForm.newName
+          const newTeacherID = this.$data.newTeacherForm.newTeacherID
+          axios({
+              url:'http://localhost:18082/TeacherAccount/addTeacherAccount',
+              method:'post',
+              headers:{ Authorization:token.Authorization },
+              data:{newTAccount,newTPassword,newTName,newTeacherID}
+          }).then ( (res) => {
+              if (res.data.msg == '账号名已存在,请重新尝试') {
+                  this.$message.error(`${res.data.msg}`)
+              } else {
+                this.$message.success('新增账号成功，请刷新页面')
+              }
+          }).catch( (err) => {
+            console.log(err);
+          })
         } 
         //不符合rules
         else {
-          this.$message({
-          message: '提交失败',
-          type: 'error'
-        })
+            this.$message.error('提交失败')
             return false;
           }
         });
@@ -215,25 +239,23 @@ import { getToken } from '@/utils/auth'
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
           axios({
           url:'http://localhost:18082/TeacherAccount/deleteTeacher',
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{deleteTeacherAccountName}
         }).then((res) => {
-          console.log(res);
-        }).catch( (err) => {
-          console.log(err);
-        })}
+          // 判断是否有相关选题
+            if ( res.data.msg == '删除账号存在相关选题存在，无法删除' ) {
+              this.$message.error(`${res.data.msg}`)
+            } else {
+              this.$message.success('删除账号成功，请刷新页面')
+            }
+          }).catch( (err) => {
+            console.log(err);
+          })}
         ).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+          this.$message.info('已取消删除');          
         });
       }
     },    
@@ -260,8 +282,8 @@ import { getToken } from '@/utils/auth'
               that.$data.tableData.push(item)
             })
       }).catch( err => { console.log(err); })
-  },
   }
+}
 </script>
 
 <style>

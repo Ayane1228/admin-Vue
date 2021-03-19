@@ -1,7 +1,9 @@
 <template>
   <div class="mian">
     <h3>学生个人信息</h3>
+    <!-- 学生个人信息表格 -->
     <el-form ref="form" :model="form" label-width="80px">
+      <!-- 姓名 -->
       <el-form-item label="姓名">
         <el-col :span="10">
         <el-input 
@@ -9,33 +11,32 @@
           :disabled="true" ></el-input>
           </el-col>
       </el-form-item>
-      
+      <!-- 学号 -->
       <el-form-item label="学号">
         <el-col :span="10">
         <el-input v-model="form.studentID"  :disabled="true"></el-input>
         </el-col>
       </el-form-item>
-      
-      
+      <!-- 电话 -->
       <el-form-item label="联系电话">
           <el-col :span="10">
             <el-input v-model="form.phone"></el-input>
           </el-col>
       </el-form-item>
-      
+      <!-- 电子邮箱 -->
       <el-form-item label="电子邮箱">
         <el-col :span="10">
           <el-input v-model="form.email"></el-input>
         </el-col>
       </el-form-item>
-
+      <!-- 学生专业 -->
       <el-form-item label="专业">
         <el-col :span="10">
           <el-input v-model="form.major" :disabled="true"></el-input>
         </el-col>
       </el-form-item>
-
-      <el-form-item label="个人简介">
+      <!-- 学生个人介绍 -->
+      <el-form-item label="个人介绍">
         <el-col :span="10">
           <el-input
           type="textarea"
@@ -45,9 +46,16 @@
         </el-input>
         </el-col>
       </el-form-item>
-
+      <!-- 按钮 -->
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">立即保存</el-button>
+        <!-- 提交信息 -->
+        <el-col :span="6">
+          <el-button type="primary" @click="onSubmit">立即保存</el-button>
+        </el-col>
+        <!-- 修改密码 -->
+        <el-col :span="6">
+          <el-button type="warning" plain @click="changeStudentPassword">修改密码</el-button>
+        </el-col>
       </el-form-item>
     </el-form>
   </div>
@@ -76,7 +84,8 @@ export default {
           message: '保存成功',
           type: 'success'
         });
-      },
+    },
+    // 更新信息 
     onSubmit(){
       this.change()
       const token = this.header
@@ -94,6 +103,38 @@ export default {
         }).catch( (err) => {
           console.log(err);
         })
+    },
+    // 学生修改密码
+    changeStudentPassword(){
+      this.$prompt('请输入新密码', '修改密码', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+        }).then(({ value }) => {
+          if( value.length < 4 ){
+            this.$message({
+              type: 'error',
+              message: '新密码必须大于四位'
+            });
+          } else {
+            const token = this.header
+            axios({
+              url:'http://localhost:18082/information/changeStudentPassword',
+              method:'post',
+              headers:{ Authorization:token.Authorization },
+              data:{value}
+           }).then( (res) => {
+             this.$message.success('修改成功')
+             console.log(res);
+           }).catch( (err) => {
+             console.log(err);
+           })
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消输入'
+          });       
+        });      
     }
   },
   //计算属性获取token
@@ -104,11 +145,11 @@ export default {
         }
       }
     },
+    // 获取当前信息
     beforeMount() {
       const that = this
       const dataForm = that.$data.form
       const token = this.header
-      // 请求后端数据
       axios.get('http://localhost:18082/information/studentInformation',{
             // 并保存token到请求头中
             headers:{

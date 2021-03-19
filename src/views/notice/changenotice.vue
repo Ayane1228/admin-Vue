@@ -3,12 +3,14 @@
     <div class="newNotice">
     <div style="margin: 20px 0;"></div>
     <h3>发布公告</h3>
-    <el-input
+      <!-- 新公告内容框 -->
+      <el-input
       type="textarea"
       :autosize="{ minRows: 10, maxRows: 50}"
       placeholder="请输入内容"
       v-model="textareaContent">
-    </el-input>
+      </el-input>
+      <!-- 发布按钮 -->
       <el-button 
         type="success"
         @click="submitNotice"
@@ -17,39 +19,41 @@
       </el-button>
     </div>
     <hr>
+    <!-- 通知展示 -->
     <div id="main">
     <h3>最新通知</h3>
-    <el-table
-      :data="list"
-      stripe
-      fit
-      highlight-current-row
-      style="width: 100%">
-        <el-table-column
-          prop="noticeTime"
-          label="日期"
-          width="180">
-        </el-table-column>
-        <el-table-column
-          prop="noticeTitle"
-          label="题目"
-          width="600">
-        </el-table-column>
-        <el-table-column>
-          <template slot-scope="scope">
-            <el-button 
-              type="primary" 
-              @click="showContent(scope.$index, scope.row)">
-              查看详情
-            </el-button>
-            <el-button 
-              @click="deleteNotice(scope.$index, scope.row)"
-              type="danger">
-              删除公告
-            </el-button>
-          </template>
-        </el-table-column>
-    </el-table>
+      <el-table
+        :data="list"
+        stripe
+        fit
+        highlight-current-row
+        style="width: 100%">
+          <el-table-column
+            prop="noticeTime"
+            label="日期"
+            width="180">
+          </el-table-column>
+          <el-table-column
+            prop="noticeTitle"
+            label="题目"
+            width="600">
+          </el-table-column>
+          <!-- 查看详情，删除公告 -->
+          <el-table-column>
+            <template slot-scope="scope">
+              <el-button 
+                type="primary" 
+                @click="showContent(scope.$index, scope.row)">
+                查看详情
+              </el-button>
+              <el-button 
+                @click="deleteNotice(scope.$index, scope.row)"
+                type="danger">
+                删除公告
+              </el-button>
+            </template>
+          </el-table-column>
+      </el-table>
     </div>
   </div>
 </template>
@@ -97,15 +101,16 @@ export default {
         this.$alert(`是否要删除公告:${row.noticeTitle}`, '删除公告', {
           confirmButtonText: '确定删除'
         }).then ( () =>{
+            this.$message.success('删除成功，请刷新页面')
             // 获取当前的token
             const token = this.header
             axios({
               url:'http://localhost:18082/notice/deleteNotice',
               method:"post",
-              headers:{
-                Authorization:token.Authorization
-              },
+              headers:{ Authorization:token.Authorization },
               data:{deleteNotice}
+            }).then( (res) =>{
+              console.log(res)
             })
         }).catch( (err) => {
           console.log(err);
@@ -141,15 +146,13 @@ export default {
           }).then( (res) =>{
             console.log(res);
           }).catch( (err) => {
-              console.log('请求发布接口失败' + err);
+              console.log(err);
             })
             // 发布结束之后的回调    
             this.$message({
                 type: 'success',
-                message: '发布成功,标题为: ' + value
-              }).then( 
-                console.log('发布成功')
-              ).catch((err) => {
+                message: '发布成功,标题为: ' + value + ',请刷新页面'
+              }).catch(() => {
               this.$message({
                 type: 'error',
                 message: '发布失败'
