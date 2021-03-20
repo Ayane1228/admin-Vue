@@ -52,7 +52,7 @@
       <!-- 保存按钮,修改密码(管理员禁用) -->
       <el-form-item>
         <el-col :span="6">
-            <el-button type="primary" @click="onSubmit">
+            <el-button type="primary" @click="onSubmit('form')">
               立即保存
             </el-button>
         </el-col>
@@ -81,7 +81,7 @@ export default {
                 setTimeout(() => {
                     var reg = /^[1][3-8][0-9]{9}$/;
                     if (!reg.test(value)) {
-                        callback(new Error('请输入正确手机号'));
+                        callback(new Error('请输入正确手机号！'));
                     } else {
                         callback();
                     }
@@ -97,7 +97,7 @@ export default {
                 setTimeout(() => {
                     var reg = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+((\.[a-zA-Z0-9_-]{2,3}){1,2})$/;
                     if (!reg.test(value)) {
-                        callback(new Error('请输入正确邮箱'));
+                        callback(new Error('请输入正确邮箱！'));
                     } else {
                         callback();
                     }
@@ -124,7 +124,7 @@ export default {
   },    
   methods:{
     // 提交信息
-    onSubmit(){
+    onSubmit(form){
         const token = this.header
         this.$refs[form].validate( (valid) => {
         // 再次前端验证
@@ -142,8 +142,11 @@ export default {
               headers:{ Authorization:token.Authorization },
               data:{ trueName,newPhone,newEmail,newOffice }
             }).then( (res) => {
-              this.$message.success('保存成功,请刷新页面');
-              console.log(res);
+              if (res.data.msg == '修改管理员信息成功' ) {
+                this.$message.success('修改管理员信息成功，请刷新页面')
+              } else {
+                this.$message.error('修改管理员信息失败，请重试')
+              }
             }).catch( (err) => {
               console.log(err);
             })
@@ -160,7 +163,11 @@ export default {
               headers:{ Authorization:token.Authorization },
               data:{ trueName,newPhone,newEmail,newOffice,newTeacherrank }
             }).then( (res) => {
-              console.log(res);
+              if( res.data.msg == "修改教师信息成功" ) {
+                this.$message.success('修改教师信息成功，请刷新页面')
+              } else {
+                this.$message.error('修改教师信息失败，请重试')
+              }
             }).catch( (err) => {
               console.log(err);
             })
@@ -179,7 +186,7 @@ export default {
           cancelButtonText: '取消',
         }).then(({ value }) => {
           if( value.length < 4 ){
-            this.$message.error('新密码必须大于四位')
+            this.$message.error('新密码必须大于四位！')
           } else {
             const token = this.header
             axios({
@@ -188,8 +195,11 @@ export default {
               headers:{ Authorization:token.Authorization },
               data:{value}
            }).then( (res) => {
-             this.$message.success('修改成功')
-             console.log(res);
+             if( res.data.msg == "教师修改密码成功") {
+              this.$message.success('修改密码成功！')
+             } else {
+               this.$message.error('修改密码失败！')
+             }
            }).catch( (err) => {
              console.log(err);
            })

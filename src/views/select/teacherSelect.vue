@@ -151,13 +151,12 @@ export default {
     },
     // 取消选择
     cancel(row){
-        this.$confirm(`此操作将取消当前选择学生：${row.truename}。选中的课题: ${row.title}, 是否继续?`, '提示', {
+        this.$confirm(`此操作将取消当前学生：${row.truename}。选中的课题: ${row.title}, 是否继续?`, '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
           const token = this.header
-          console.log(row);
           axios({
             url:'http://localhost:18082/select/cancelStudent',
             method:'post',
@@ -165,13 +164,13 @@ export default {
             data:{ row }
           }).then((res) => {
             console.log(res);
-          }).catch((err) => {
-            console.log(err);
-          })
-          this.$message({
+            this.$message({
             type: 'success',
             message: '取消选择成功,请刷新页面'
           });
+          }).catch((err) => {
+            console.log(err);
+          })
         }).catch(() => {
           this.$message({
             type: 'info',

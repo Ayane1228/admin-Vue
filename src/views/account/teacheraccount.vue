@@ -88,9 +88,19 @@
       </el-table-column>
       <!-- 姓名 -->
       <el-table-column
-          label="姓名"
+          label="教师姓名"
           prop="truename">
       </el-table-column>
+      <!-- 工号 -->
+      <el-table-column
+          label="工号"
+          prop="teacherID">
+      </el-table-column>          
+      <!-- 职称 -->
+      <el-table-column
+          label="职称"
+          prop="teacherrank">      
+      </el-table-column>      
       <!-- 修改密码 -->
       <el-table-column>
             <template slot-scope="scope">

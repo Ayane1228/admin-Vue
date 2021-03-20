@@ -2,7 +2,8 @@
   <div class="mian">
     <h3>学生个人信息</h3>
     <!-- 学生个人信息表格 -->
-    <el-form ref="form" 
+    <el-form 
+      ref="form" 
       :model="form" 
       label-width="80px" 
       :rules="rules">
@@ -53,7 +54,7 @@
       <el-form-item>
         <!-- 提交信息 -->
         <el-col :span="6">
-          <el-button type="primary" @click="onSubmit">立即保存</el-button>
+          <el-button type="primary" @click="onSubmit('form')">立即保存</el-button>
         </el-col>
         <!-- 修改密码 -->
         <el-col :span="6">
@@ -118,7 +119,7 @@ export default {
   },    
   methods:{
     // 更新信息 
-    onSubmit(){
+    onSubmit(form){
         this.$refs[form].validate( (valid) => {
         // 再次前端验证
         if (valid) {
@@ -133,7 +134,11 @@ export default {
               headers:{ Authorization:token.Authorization },
               data:{ trueName,newPhone,newEmail,newIntroduction }
             }).then( (res) => {
-              this.$message.success('保存成功');
+              if (res.data.msg == '修改学生信息成功' ) {
+                this.$message.success('修改学生信息成功，请刷新页面')
+              } else {
+                this.$message.error('修改学生信息失败，请重试')
+              }
             }).catch( (err) => {
               console.log(err);
             })
@@ -153,7 +158,7 @@ export default {
           if( value.length < 4 ){
             this.$message({
               type: 'error',
-              message: '新密码必须大于四位'
+              message: '新密码必须大于四位!'
             });
           } else {
             const token = this.header
@@ -163,8 +168,11 @@ export default {
               headers:{ Authorization:token.Authorization },
               data:{value}
            }).then( (res) => {
-             this.$message.success('修改成功')
-             console.log(res);
+             if( res.data.msg == "学生修改密码成功") {
+              this.$message.success('修改密码成功！')
+             } else {
+               this.$message.error('修改密码失败！')
+             }
            }).catch( (err) => {
              console.log(err);
            })

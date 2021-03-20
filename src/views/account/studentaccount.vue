@@ -128,9 +128,29 @@
     </el-table-column>
     <!-- 姓名 -->
     <el-table-column
-        label="姓名"
+        label="学生姓名"
         prop="truename">
     </el-table-column>
+    <!-- 学号 -->
+    <el-table-column
+        label="学号"
+        prop="studentID">
+    </el-table-column>
+    <!-- 班号 -->
+    <el-table-column
+        label="班号"
+        prop="classID">
+    </el-table-column> 
+    <!-- 学院 -->
+    <el-table-column
+        label="学院"
+        prop="college">
+    </el-table-column> 
+    <!-- 专业  -->
+    <el-table-column
+        label="专业"
+        prop="major">
+    </el-table-column> 
     <!-- 按钮：修改密码，删除账号 -->
     <el-table-column>
           <template slot-scope="scope">
@@ -176,7 +196,7 @@ import { getToken } from '@/utils/auth'
             }
         };
       return {
-        // 默认数据
+        // 新学生数据，默认均为空
         newStudentForm: {
           newAccount: null,
           newPassword: null,
