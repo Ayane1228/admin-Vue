@@ -4,8 +4,9 @@
     <h5>每个学生可以选择符合自己专业的选题并等待教师确认最终选题结果。</h5>
     <div class="main">
       <el-table
-      :data="allSelect"
-      style="width: 100%">
+        :ref="allSelect"
+        :data="allSelect"
+        style="width: 100%">
           <!-- 展开部分 -->
           <el-table-column type="expand">
             <template slot-scope="props">
@@ -34,35 +35,48 @@
               </el-form>
             </template>
           </el-table-column>
+          <!-- 选题 -->
           <el-table-column
             prop="title"
             label="选题"
             width="180">
           </el-table-column>
+          <!-- 指导教师 -->
           <el-table-column
             prop="teachername"
             label="指导教师"
             width="180">
           </el-table-column>
+          <!-- 职称 -->
           <el-table-column
             prop="teacherrank"
             label="教师职称"
             width="180">
           </el-table-column>
+          专业
           <el-table-column
             prop="needmajor"
             label="专业要求"
             width="180">
           </el-table-column>
+          <!-- 是否可选 -->
           <el-table-column
             prop="isTrue"
             width="180"
-            label="当前是否可选">
+            label="当前是否可选"
+            :filters="[{ text: '可选', value: '可选' }, { text: '不可选', value: '不可选' }]"
+            :filter-method="filterIsTrue"
+            :filtered-value="['可选']"
+            filter-placement="bottom-end">
             <template slot-scope="scope">
             <!-- 三元运算符定义tag的内容 -->
-            <el-tag :type="scope.row.istrue=='可选' ? 'success' : 'danger'" >{{scope.row.istrue}}</el-tag>
+            <el-tag
+              :type="scope.row.istrue=='可选' ? 'success' : 'danger'" >
+                {{scope.row.istrue}}
+            </el-tag>
             </template>
           </el-table-column>
+          <!-- 确认选择 -->
           <el-table-column
             prop="submit"
             label="确认选择"
@@ -129,7 +143,11 @@ export default {
         }).catch(() => {
           this.$message.info('取消选题')       
         })
-      }
+    },
+    // 过滤是否可选
+    filterIsTrue(value,row) {
+      return row.istrue === value
+    },   
   },
 
   // 获取选题信信息
@@ -166,8 +184,9 @@ export default {
             item.istrue = '不可选'
           })
           },250)
+          that.$message.warning('教师无法选题')
         } else{
-          console.log('学生账号，可以选择');
+          return
         }
       }).catch( (err) => {
         console.log(err);

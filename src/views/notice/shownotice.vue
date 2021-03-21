@@ -61,7 +61,7 @@ export default {
         }).catch( (err) => {
           console.log(err);
         });
-      }
+      },
     },
     //计算属性获取token
     computed:{
