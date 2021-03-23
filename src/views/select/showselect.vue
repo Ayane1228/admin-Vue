@@ -1,11 +1,31 @@
 <template>
   <div>
+    <!-- 模糊搜索 -->
+    <h2>搜索相关选题</h2>
+    <div class="search">
+        <el-form ref="form" :model="form" label-width="80px" class="searchForm">
+        <el-form-item label="搜索:">
+          <el-input
+            class="serachInput"
+            clearable
+            placeholder="请输入搜索内容"
+            v-model="form.serachContent"
+            >
+            <el-button 
+              slot="append" 
+              icon="el-icon-search"
+              @click="search(form.serachContent)"></el-button>
+          </el-input>
+        </el-form-item>
+      </el-form> 
+    </div>
+    <div class="all">
     <h2>选择选题</h2>
     <h5>每个学生可以选择符合自己专业的选题并等待教师确认最终选题结果。</h5>
     <div class="main">
       <el-table
         :ref="allSelect"
-        :data="allSelect"
+        :data="allSelect.slice((currentPage - 1) * pagesize, currentPage*pagesize)"
         style="width: 100%">
           <!-- 展开部分 -->
           <el-table-column type="expand">
@@ -53,7 +73,7 @@
             label="教师职称"
             width="180">
           </el-table-column>
-          专业
+          <!-- 专业 -->
           <el-table-column
             prop="needmajor"
             label="专业要求"
@@ -66,7 +86,6 @@
             label="当前是否可选"
             :filters="[{ text: '可选', value: '可选' }, { text: '不可选', value: '不可选' }]"
             :filter-method="filterIsTrue"
-            :filtered-value="['可选']"
             filter-placement="bottom-end">
             <template slot-scope="scope">
             <!-- 三元运算符定义tag的内容 -->
@@ -91,6 +110,17 @@
             </template>
           </el-table-column>
       </el-table>
+      <!-- 分页器 -->
+      <div class="pagination">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="pagesize"
+          layout="prev, pager, next"
+          :total="100">
+        </el-pagination>
+      </div>
+    </div>
     </div>
   </div>
 </template>
@@ -100,11 +130,17 @@ import { getToken } from '@/utils/auth'
 export default {
   data(){
     return {
-      allSelect:[]
+      pagesize: 10, //设置每页显示条目个数为10
+      currentPage: 1, //设置当前页默认为1
+      allSelect:[],
+      form:{
+          // 搜索初始值
+          serachContent:null
+      }
     }
   },
-  //计算属性获取token
   computed:{
+    //  计算属性获取token
     header(){
       return {
         Authorization:`Bearer ${getToken()}`
@@ -112,6 +148,18 @@ export default {
       }
   },
   methods:{
+    // 模糊搜索,参数：输入框中的值
+    search(serachContent){
+        const oldSelect = this.$data.allSelect
+        // 遍历数组
+        oldSelect.forEach( (item) => {
+          // 遍历数组中的对象的属性值
+          for(var prop in item){
+            //使用[]，属性名是用字符串表示的。因此可以打印出属性值
+              console.log(item[prop]);
+           }
+        })
+    },
     // 学生确认选题
     submit(row) {
           this.$confirm(`注意一个学生一次只选择一个选题，这次将选择选题: ${row.title}, 是否继续?`, '提示', {
@@ -148,6 +196,10 @@ export default {
     filterIsTrue(value,row) {
       return row.istrue === value
     },   
+    // 分页器,设置当前页：current-change	currentPage（当前页） 改变时会触发	
+    handleCurrentChange: function(currentPage) {
+      this.currentPage = currentPage
+    },
   },
 
   // 获取选题信信息
@@ -204,5 +256,21 @@ export default {
   }
   .main{
     margin-left: 50px;
+  }
+  .all{
+    margin-top: 36px;
+  }
+  .serachInput{
+    width: 500px;
+  }
+  .searchForm{
+    margin-top: 15px;
+  }
+  .serach h2{
+    margin-top: 10px;
+  }
+  .pagination{
+    margin-top: 36px;
+    text-align: center;
   }
 </style>

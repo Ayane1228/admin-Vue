@@ -2,8 +2,14 @@
   <div>
     <div id="main">
     <h3>最新通知</h3>
+    <!-- 
+        首先是数组的 .slice 方法，用来截取数组，它接受收两个参数，第一个是开始的索引值，第二个是结束的索引值。
+        截取的数组的值放在一个新的数组中,但是不包含结束的索引对应的元素值。
+        所以，当前页为第一页时 data 数据源为 从第0条到第 pageSize 条，
+        而当currentPage或者pageSize发生改变时，data数据源也会跟着变化，
+        因此就实现了分页器与表格的连接。 -->
         <el-table
-        :data="list"
+        :data="list.slice((currentPage - 1) * pagesize, currentPage*pagesize)"
         stripe
         fit
         highlight-current-row
@@ -31,6 +37,20 @@
             </template>
           </el-table-column>
       </el-table>
+      <!-- 分页器 -->
+      <!-- size-change	pagesize 改变时会触发	每页条数size，设置page-sizes为数组时能使用这个函数，使得每页显示的个数都不一样 -->
+      <!-- current-change	当前页currentPage 改变时会触发	 -->
+      <!-- layout，表示需要显示的内容，用逗号分隔，布局元素会依次显示。prev表示上一页，next为下一页，pager表示页码列表,还有jumper（...）表示跳转 -->
+      <!-- total表示总条目数（可以用来设置总共的页数：页数 = total / pagesize） -->
+      <div class="pagination">
+        <el-pagination
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-size="pagesize"
+          layout="prev, pager, next"
+          :total="100">
+        </el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -44,10 +64,16 @@ export default {
   // 公告数据
     data() {
       return {
+        pagesize: 10, //设置每页显示条目个数为10
+        currentPage: 1, //设置当前页默认为1
         list: []
       }
     },
     methods:{
+    // 设置当前页current-change	currentPage（当前页） 改变时会触发	
+    handleCurrentChange: function(currentPage) {
+      this.currentPage = currentPage
+    },
       // 查看详情，参数：当前行的index值(和list数组中的index对应)
       showContent(index){
         this.$alert(this.$data.list[index].noticeContent, this.$data.list[index].noticeTitle, {
@@ -57,14 +83,15 @@ export default {
         showCancelButton:true,
         cancelButtonText:"关闭"
         }).then( () =>{
-          console.log('查看详情');
+          console.log('查看详情成功');
         }).catch( (err) => {
           console.log(err);
         });
       },
     },
-    //计算属性获取token
+    //计算属性
     computed:{
+    // 获取token
       header(){
         return {
           Authorization:`Bearer ${getToken()}`
@@ -88,11 +115,13 @@ export default {
               item.noticeTime = utc2beijing(item.noticeTime)
               // 显示数据
               that.$data.list.push(item)
+              // 翻转数组
+              that.$data.list.reverse()
             })
       }).catch(err => {
         console.log(err);
       }) 
-  }
+    },
 }
 </script>
 
@@ -105,5 +134,9 @@ export default {
   overflow-x:hidden ;
   width: 60%;
   height: 80%;
+}
+.pagination{
+  text-align: center;
+  margin-top: 36px;
 }
 </style>
