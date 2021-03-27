@@ -69,6 +69,7 @@
 <script>
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
+import { logout } from '@/api/user'
 
 export default {
       data() {
@@ -119,9 +120,50 @@ export default {
         rules: {
             phone:[{ validator: checkPhone, trigger: 'blur'  }],
             email:[{ validator: checkEmail, trigger: 'blur'  }]
-         }
+         },
+        teacherInformationUrl:`${process.env.VUE_APP_BASE_API}/information`
       }
-  },    
+  },   
+  // 获取默认数据 
+  beforeMount() {
+      const that = this
+      const dataForm = that.$data.form
+      const token = this.header
+      // 请求后端数据
+      axios.get(`${this.$data.teacherInformationUrl}/teacherInformation`,{
+            // 并保存token到请求头中
+            headers:{
+              Authorization:token.Authorization
+            }
+        }).then( (res) =>{
+          // 判断管理员还是教师账号
+          if (res.data.msg == '获取admin信息成功') {
+            that.$data.flag = 0
+            this.$message({
+              message: '管理员账号',
+              center: true
+            });
+            const result = res.data.data[0]
+            dataForm.truename = result.truename
+            dataForm.teacherID = result.teacherID
+            dataForm.phone = result.phone
+            dataForm.email = result.email
+            dataForm.office = result.office
+            dataForm.teacherrank = result.teacherrank
+          } else {
+              that.$data.flag = 1
+              const result = res.data.data[0]
+              dataForm.truename = result.truename
+              dataForm.teacherID = result.teacherID
+              dataForm.phone = result.phone
+              dataForm.email = result.email
+              dataForm.office = result.office
+              dataForm.teacherrank = result.teacherrank              
+          }
+        }).catch( (err) => {
+          console.log(err);
+        })
+  }, 
   methods:{
     // 提交信息
     onSubmit(form){
@@ -130,28 +172,24 @@ export default {
         // 再次前端验证
         if (valid) {
           // 判断管理员还是教师
-          // 管理员
+          // 如果是管理员，请求接口adminChangeInf
           if (this.$data.flag === 0)  {
             const trueName = this.$data.form.truename
             const newPhone = this.$data.form.phone
             const newEmail = this.$data.form.email
             const newOffice = this.$data.form.office
             axios({
-              url:'http://localhost:18082/information/adminChangeInf',
+              url:`${this.$data.teacherInformationUrl}/adminChangeInf`,
               method:"post",
               headers:{ Authorization:token.Authorization },
               data:{ trueName,newPhone,newEmail,newOffice }
             }).then( (res) => {
-              if (res.data.msg == '修改管理员信息成功' ) {
-                this.$message.success('修改管理员信息成功，请刷新页面')
-              } else {
-                this.$message.error('修改管理员信息失败，请重试')
-              }
+              this.$message.success(res.data.msg)
             }).catch( (err) => {
               console.log(err);
             })
           } else {
-          // 教师
+            // 教师
             const trueName = this.$data.form.truename
             const newPhone = this.$data.form.phone
             const newEmail = this.$data.form.email
@@ -190,13 +228,14 @@ export default {
           } else {
             const token = this.header
             axios({
-              url:'http://localhost:18082/information/changeTeacherPassword',
+              url:`${this.$data.teacherInformationUrl}/changeTeacherPassword`,
               method:'post',
               headers:{ Authorization:token.Authorization },
               data:{value}
            }).then( (res) => {
+             console.log(res.data.msg);
              if( res.data.msg == "教师修改密码成功") {
-              this.$message.success('修改密码成功！')
+                this.$message.success('修改密码成功!')
              } else {
                this.$message.error('修改密码失败！')
              }
@@ -217,46 +256,6 @@ export default {
         }
       }
     },
-    // 获取默认数据 
-    beforeMount() {
-      const that = this
-      const dataForm = that.$data.form
-      const token = this.header
-      // 请求后端数据
-      axios.get('http://localhost:18082/information/teacherInformation',{
-            // 并保存token到请求头中
-            headers:{
-              Authorization:token.Authorization
-            }
-        }).then( (res) =>{
-          // 判断管理员还是教师账号
-          if (res.data.msg == '获取admin信息成功') {
-            that.$data.flag = 0
-            this.$message({
-              message: '管理员账号',
-              center: true
-            });
-            const result = res.data.data[0]
-            dataForm.truename = result.truename
-            dataForm.teacherID = result.teacherID
-            dataForm.phone = result.phone
-            dataForm.email = result.email
-            dataForm.office = result.office
-            dataForm.teacherrank = result.teacherrank
-          } else {
-              that.$data.flag = 1
-              const result = res.data.data[0]
-              dataForm.truename = result.truename
-              dataForm.teacherID = result.teacherID
-              dataForm.phone = result.phone
-              dataForm.email = result.email
-              dataForm.office = result.office
-              dataForm.teacherrank = result.teacherrank              
-          }
-        }).catch( (err) => {
-          console.log(err);
-        })
-  }
 }
 </script>
 

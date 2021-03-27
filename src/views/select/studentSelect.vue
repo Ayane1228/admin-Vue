@@ -74,6 +74,7 @@ import { getToken } from '@/utils/auth'
 export default {
     data(){
         return{
+            studentSelectUrl:`${process.env.VUE_APP_BASE_API}/select`,
             resultSelect:{
                 title:'null',
                 teachername:'null',
@@ -94,37 +95,11 @@ export default {
             }
         }
     },
-    methods:{
-        // 学生取消选题
-        cancelSelect(resultSelect){
-            this.$confirm(`此操作将取消当前选题：${resultSelect.title}, 是否继续?`, '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-        }).then( () => {
-            const token = this.header
-            axios({
-                url:'http://localhost:18082/select/cancelSelect',
-                headers:{ Authorization:token.Authorization },
-            }).then( (res) => {
-                if (res.data.msg == "取消选题成功") {
-                    this.$message.success("取消选题成功！")
-                } else {
-                    this.$message.error("取消选题失败！")                    
-                }
-            }).catch( (err) => {
-                console.log(err);
-            })
-        }).catch( () => {
-            this.$message.info('取消成功')
-        })
-        }
-    },
     beforeMount(){
       const that = this
       const token = this.header
         // 请求后端数据
-        axios.get('http://localhost:18082/select/studentSelect',{
+        axios.get(`${this.$data.studentSelectUrl}/studentSelect`,{
             // 并保存token到请求头中
             headers:{
               Authorization:token.Authorization
@@ -144,7 +119,33 @@ export default {
         }).catch( (err) => {
           console.log(err);
         })
-    }
+    },
+    methods:{
+        // 学生取消选题
+        cancelSelect(resultSelect){
+            this.$confirm(`此操作将取消当前选题：${resultSelect.title}, 是否继续?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then( () => {
+            const token = this.header
+            axios({
+                url:`${this.$data.studentSelectUrl}/cancelSelect`,
+                headers:{ Authorization:token.Authorization },
+            }).then( (res) => {
+                if (res.data.msg == "取消选题成功") {
+                    this.$message.success("取消选题成功！请刷新页面")
+                } else {
+                    this.$message.error("取消选题失败！")                    
+                }
+            }).catch( (err) => {
+                console.log(err);
+            })
+        }).catch( () => {
+            this.$message.info('取消成功')
+        })
+        }
+    },
 }
 </script>
 

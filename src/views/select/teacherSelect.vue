@@ -131,7 +131,8 @@ import { getToken } from '@/utils/auth'
 export default {
   data(){
     return {
-      allSelect:[]
+      allSelect:[],
+      teacherSelectUrl:`${process.env.VUE_APP_BASE_API}/select`
     }
   },
   //获取token
@@ -143,6 +144,25 @@ export default {
       }
   },
 
+  // 获取当前教师选题信息
+  beforeMount(){
+      const that = this
+      const token = this.header
+      axios.get(`${this.$data.teacherSelectUrl}/teachersSelect`,
+        {
+          headers:{ Authorization:token.Authorization}
+        }
+      ).then( (res) => {
+            //保存到data中
+            res.data.data.map( (item) => {
+              // 显示数据
+              that.$data.allSelect.push(item)
+            })
+      }).catch( (err) => {
+        console.log(err);
+      })
+  },
+  
   methods:{
     // 显示学生详细信息
     showmore(row){
@@ -158,24 +178,18 @@ export default {
         }).then(() => {
           const token = this.header
           axios({
-            url:'http://localhost:18082/select/cancelStudent',
+            url:`${this.$data.teacherSelectUrl}/cancelStudent`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{ row }
           }).then((res) => {
             console.log(res);
-            this.$message({
-            type: 'success',
-            message: '取消选择成功,请刷新页面'
-          });
+            this.$message.success(res.data.msg)
           }).catch((err) => {
             console.log(err);
           })
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消成功'
-          });          
+          this.$message.info('取消成功');          
         });
     },
     // 确认选择学生
@@ -188,7 +202,7 @@ export default {
           const token = this.header
           console.log(row);
           axios({
-            url:'http://localhost:18082/select/pickStudent',
+            url:`${this.$data.teacherSelectUrl}/pickStudent`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{ row }
@@ -218,7 +232,7 @@ export default {
           const token = this.header
           console.log(row);
           axios({
-            url:'http://localhost:18082/select/deleteSelect',
+            url:`${this.$data.teacherSelectUrl}/deleteSelect`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{ row }
@@ -238,27 +252,7 @@ export default {
           });          
         });
     },
-
   },
-
-  // 获取当前教师选题信息
-  beforeMount(){
-      const that = this
-      const token = this.header
-      axios.get('http://localhost:18082/select/teachersSelect',
-        {
-          headers:{ Authorization:token.Authorization}
-        }
-      ).then( (res) => {
-            //保存到data中
-            res.data.data.map( (item) => {
-              // 显示数据
-              that.$data.allSelect.push(item)
-            })
-      }).catch( (err) => {
-        console.log(err);
-      })
-  }
 }
 </script>
 

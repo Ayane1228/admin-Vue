@@ -179,7 +179,7 @@ import axios from 'axios'
 import { getToken } from '@/utils/auth'
   export default {
     data() {
-      // 自定义规则
+        // 自定义规则-账号
         var checkAccount = (rule, value, callback) => {
             if (!value) {
                 return callback();
@@ -195,6 +195,22 @@ import { getToken } from '@/utils/auth'
                 }, 50);
             }
         };
+        // 自定义规则-密码
+        var checkPassword = ( rule,value,callback ) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^[0-9a-zA-Z]{1,}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入四位以上的数字或字母'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+        }
       return {
         // 新学生数据，默认均为空
         newStudentForm: {
@@ -243,16 +259,35 @@ import { getToken } from '@/utils/auth'
           newAccount:[  { required: true, message: '请输入账号名', trigger: 'blur' },
                         { validator: checkAccount, trigger: 'blur'  }],
           newPassword:[ { required: true, message: '请输入密码', trigger: 'blur'  },
-                        { min: 4, message: '密码长度最小为4个字符', trigger: 'blur' }],
+                        { min: 4, message: '密码长度最小为4个字符', trigger: 'blur'},
+                        { validator: checkPassword, trigger: 'blur'  }],
           newName:[{  required: true, message: '请输入学生姓名', trigger: 'blur'  }],
           newStudentID:[  { required: true, message: '请输入学生学号', trigger: 'blur' },
-                          { type: 'number', message: '学号必须为数字'}  ],
-          newStudentClassID:[ { required: true, message: '请输入学生班号', trigger: 'blur'  },
+                          { type: 'number', message: '学号必须为数字'} ],
+          newStudentClassID:[ { required: true, message: '请输入学生班号', trigger: 'blur' },
                               { type: 'number', message: '班号必须为数字'} ]
         },
         // 下方数据
-        tableData: []
+        tableData: [],
+        studentAccountURl:`${process.env.VUE_APP_BASE_API}/studentAccount`
       }
+    },
+        // 查询数据
+    beforeMount() {
+      const that = this
+      const token = this.header
+      console.log(this.$data.studentAccountURl);
+      // 请求后端数据
+      axios.get(`${this.$data.studentAccountURl}/showStudentAccount`,{
+            // 并保存token到请求头中
+            headers:{ Authorization:token.Authorization }
+        }).then( function (res) {
+            //保存到data中
+            res.data.data.map( (item) => {
+              // 显示数据
+              that.$data.tableData.push(item)
+            })
+      }).catch( err => { console.log(err); })
     },
     methods:{
       // 添加账号
@@ -269,11 +304,12 @@ import { getToken } from '@/utils/auth'
         const newStudentClassID = this.$data.newStudentForm.newStudentClassID 
         const newStudentMajor = this.$refs['zhuangye'].getCheckedNodes()[0].data.value
         axios({
-            url:'http://localhost:18082/studentAccount/addStudentAccount',
+            url:`${this.$data.studentAccountURl}/addStudentAccount`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{newSAccount,newSPassword,newSName,newStudentID,newStudentClassID,newStudentMajor}
         }).then ( (res) => {
+          // 检查用户名是否重复
             if(res.data.msg == '账号名已存在,请重新尝试') {
               this.$message.error(`${res.data.msg}`)
             } else {
@@ -298,33 +334,22 @@ import { getToken } from '@/utils/auth'
           cancelButtonText: '取消'
         }).then(({ value }) => {
           if( value.length < 4 ){
-          this.$message({
-            type: 'error',
-            message: '新密码必须大于四位'
-          });
+            this.$message.error('新密码必须大于四位')
           } else {
           const token = this.header
           axios({
-            url:'http://localhost:18082/studentAccount/changeStudentAccount',
+            url:`${this.$data.studentAccountURl}/changeStudentAccount`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{value,studentUsername}
           }).then( (res) => {
-            console.log(res);
+            this.$message.success(res.data.msg)
           }).catch( (err) => {
-            console.log(err);
+            this.$message.error(err.msg)
           })
-          this.$message({
-            type: 'success',
-            message: '重置密码成功,新密码是: ' + value
-          });
           }
         }).catch((err) => {
-          console.log(err);
-          this.$message({
-            type: 'info',
-            message: '取消输入'
-          });       
+          this.$message.info('取消输入')      
         });
       },
       //删除学生账号
@@ -337,7 +362,7 @@ import { getToken } from '@/utils/auth'
           type: 'warning'
         }).then(() => {
           axios({
-          url:'http://localhost:18082/studentAccount/deleteStudent',
+            url:`${this.$data.studentAccountURl}/deleteStudent`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{deleteStudentAccountName}
@@ -352,10 +377,7 @@ import { getToken } from '@/utils/auth'
           console.log(err);
         })}
         ).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+          this.$message.info('已取消删除');          
         });
       }
     },    
@@ -367,22 +389,6 @@ import { getToken } from '@/utils/auth'
         }
       }
     },
-    // 查询数据
-    beforeMount() {
-      const that = this
-      const token = this.header
-      // 请求后端数据
-      axios.get('http://localhost:18082/studentAccount/showStudentAccount',{
-            // 并保存token到请求头中
-            headers:{ Authorization:token.Authorization }
-        }).then( function (res) {
-            //保存到data中
-            res.data.data.map( (item) => {
-              // 显示数据
-              that.$data.tableData.push(item)
-            })
-      }).catch( err => { console.log(err); })
-    }
   }
 </script>
 

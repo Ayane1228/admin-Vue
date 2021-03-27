@@ -64,38 +64,10 @@ export default {
   // 公告数据
     data() {
       return {
+        noticeUrl:`${process.env.VUE_APP_BASE_API}/notice`,
         pagesize: 10, //设置每页显示条目个数为10
         currentPage: 1, //设置当前页默认为1
         list: []
-      }
-    },
-    methods:{
-    // 设置当前页current-change	currentPage（当前页） 改变时会触发	
-    handleCurrentChange: function(currentPage) {
-      this.currentPage = currentPage
-    },
-      // 查看详情，参数：当前行的index值(和list数组中的index对应)
-      showContent(index){
-        this.$alert(this.$data.list[index].noticeContent, this.$data.list[index].noticeTitle, {
-        customClass:"msgBox",
-        dangerouslyUseHTMLString: true,
-        showConfirmButton:false,
-        showCancelButton:true,
-        cancelButtonText:"关闭"
-        }).then( () =>{
-          console.log('查看详情成功');
-        }).catch( (err) => {
-          console.log(err);
-        });
-      },
-    },
-    //计算属性
-    computed:{
-    // 获取token
-      header(){
-        return {
-          Authorization:`Bearer ${getToken()}`
-        }
       }
     },
     // 获取公告
@@ -103,7 +75,7 @@ export default {
       const that = this
       const token = this.header
       // 请求后端数据
-      axios.get('http://localhost:18082/notice/shownotice',{
+      axios.get(`${this.$data.noticeUrl}/shownotice`,{
             // 并保存token到请求头中
             headers:{
               Authorization:token.Authorization
@@ -121,6 +93,31 @@ export default {
       }).catch(err => {
         console.log(err);
       }) 
+    },
+    methods:{
+      // 设置当前页	currentPage（当前页）改变时会触发	
+      handleCurrentChange: function(currentPage) {
+        this.currentPage = currentPage
+      },
+      // 查看详情，参数：当前行的index值(和list数组中的index对应)
+      showContent(index){
+          this.$alert(this.$data.list[index].noticeContent, this.$data.list[index].noticeTitle, {
+          customClass:"msgBox",
+          dangerouslyUseHTMLString: true,
+          showConfirmButton:false,
+          showCancelButton:true,
+          cancelButtonText:"关闭"
+          })
+      },
+    },
+    //计算属性
+    computed:{
+    // 获取token
+      header(){
+        return {
+          Authorization:`Bearer ${getToken()}`
+        }
+      }
     },
 }
 </script>

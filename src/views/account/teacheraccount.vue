@@ -146,6 +146,22 @@ import { getToken } from '@/utils/auth'
                 }, 50);
             }
         };
+        // 自定义规则-密码
+        var checkPassword = ( rule,value,callback ) => {
+            if (!value) {
+                return callback();
+            }
+            if (value) {
+                setTimeout(() => {
+                    var reg = /^[0-9a-zA-Z]{1,}$/;
+                    if (!reg.test(value)) {
+                        callback(new Error('请输入四位以上的数字或字母'));
+                    } else {
+                        callback();
+                    }
+                }, 50);
+            }
+        }
       return {
         // 新增数据
         newTeacherForm: {
@@ -156,22 +172,50 @@ import { getToken } from '@/utils/auth'
         },
         // 验证规则
         rules:{
-          newAccount:[{ required: true, message: '请输入账号名', trigger: 'blur' },
-                      { validator: checkAccount, trigger: 'blur' }],
+          newAccount:[
+            { required: true, message: '请输入账号名', trigger: 'blur' },
+            { validator: checkAccount, trigger: 'blur' }],
           newPassword:[
-            {required: true, message: '请输入密码', trigger: 'blur'},
-            { min: 4, message: '密码长度最小为4个字符', trigger: 'blur' }
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            { min: 4, message: '密码长度最小为4个字符', trigger: 'blur'},
+            { validator: checkPassword, trigger: 'blur' }
           ],
-          newName:[{  required: true, message: '请输入教师姓名', trigger: 'blur'  }],
+          newName:[
+            { required: true, message: '请输入教师姓名', trigger: 'blur' }],
           newTeacherID:[
             { required: true, message: '请输入工号', trigger: 'blur'  },
             { type: 'number', message: '工号必须为数字'}],
         },
-        tableData: []
+        tableData: [],
+        teacherAccountUrl:`${process.env.VUE_APP_BASE_API}/TeacherAccount`
       }
     },
+    //计算属性获取token
+    computed:{
+      header(){
+        return {
+          Authorization:`Bearer ${getToken()}`
+        }
+      }
+    },
+    // 查询数据
+    beforeMount() {
+      const that = this
+      const token = this.header
+      // 请求后端数据
+      axios.get(`${this.$data.teacherAccountUrl}/showTeacherAccount`,{
+            // 并保存token到请求头中
+            headers:{ Authorization:token.Authorization }
+        }).then( function (res) {
+            //保存到data中
+            res.data.data.map( (item) => {
+              // 显示数据
+              that.$data.tableData.push(item)
+            })
+        }).catch( err => { console.log(err); })
+    },
     methods:{
-      // 添加账号
+      // 添加教师账号
       addNewTeacher(newTeacherForm) {
         this.$refs[newTeacherForm].validate((valid) => {
         // 通过前端验证
@@ -182,7 +226,7 @@ import { getToken } from '@/utils/auth'
           const newTName = this.$data.newTeacherForm.newName
           const newTeacherID = this.$data.newTeacherForm.newTeacherID
           axios({
-              url:'http://localhost:18082/TeacherAccount/addTeacherAccount',
+              url:`${this.$data.teacherAccountUrl}/addTeacherAccount`,
               method:'post',
               headers:{ Authorization:token.Authorization },
               data:{newTAccount,newTPassword,newTName,newTeacherID}
@@ -190,7 +234,7 @@ import { getToken } from '@/utils/auth'
               if (res.data.msg == '账号名已存在,请重新尝试') {
                   this.$message.error(`${res.data.msg}`)
               } else {
-                this.$message.success('新增账号成功，请刷新页面')
+                this.$message.success(res.data.msg)
               }
           }).catch( (err) => {
             console.log(err);
@@ -211,33 +255,22 @@ import { getToken } from '@/utils/auth'
           cancelButtonText: '取消'
         }).then(({ value }) => {
           if( value.length < 4 ){
-          this.$message({
-            type: 'error',
-            message: '新密码不能小于四位'
-          });
+          this.$message.error('新密码不能小于四位')
           } else {
           const token = this.header
           axios({
-            url:'http://localhost:18082/TeacherAccount/changeTeacherAccount',
+            url:`${this.$data.teacherAccountUrl}/changeTeacherAccount`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{value,TeacherUsername}
           }).then( (res) => {
-            console.log(res);
+            this.$message.success(res.data.msg)
           }).catch( (err) => {
-            console.log(err);
+            this.$message.error(err.data.msg)
           })
-          this.$message({
-            type: 'success',
-            message: '重置密码成功,新密码是: ' + value
-          });
-          }
+        }
         }).catch((err) => {
-          console.log(err);
-          this.$message({
-            type: 'info',
-            message: '取消输入'
-          });       
+          this.$message.info('取消输入');       
         });
       },
       //删除教师账号
@@ -250,49 +283,25 @@ import { getToken } from '@/utils/auth'
           type: 'warning'
         }).then(() => {
           axios({
-          url:'http://localhost:18082/TeacherAccount/deleteTeacher',
+            url:`${this.$data.teacherAccountUrl}/deleteTeacher`,
             method:'post',
             headers:{ Authorization:token.Authorization },
             data:{deleteTeacherAccountName}
         }).then((res) => {
           // 判断是否有相关选题
-            if ( res.data.msg == '删除账号存在相关选题存在，无法删除' ) {
-              this.$message.error(`${res.data.msg}`)
-            } else {
-              this.$message.success('删除账号成功，请刷新页面')
-            }
-          }).catch( (err) => {
-            console.log(err);
-          })}
-        ).catch(() => {
-          this.$message.info('已取消删除');          
-        });
-      }
-    },    
-    //计算属性获取token
-    computed:{
-      header(){
-        return {
-          Authorization:`Bearer ${getToken()}`
-        }
-      }
-    },
-    // 查询数据
-    beforeMount() {
-      const that = this
-      const token = this.header
-      // 请求后端数据
-      axios.get('http://localhost:18082/TeacherAccount/showTeacherAccount',{
-            // 并保存token到请求头中
-            headers:{ Authorization:token.Authorization }
-        }).then( function (res) {
-            //保存到data中
-            res.data.data.map( (item) => {
-              // 显示数据
-              that.$data.tableData.push(item)
-            })
-      }).catch( err => { console.log(err); })
-  }
+          if ( res.data.msg == '删除账号存在相关选题存在，禁止删除账号！' ) {
+            this.$message.error(`${res.data.msg}`)
+          } else {
+            this.$message.success(`${res.data.msg}`)
+          }
+        }).catch( (err) => {
+          console.log(err);
+        })
+      }).catch(() => {
+        this.$message.info('取消删除');          
+      });
+    }
+  },    
 }
 </script>
 

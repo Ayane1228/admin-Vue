@@ -65,7 +65,7 @@ export const asyncRoutes = [
           component: () => import('@/views//notice/changenotice'),
           name: 'changenotice',
           // 设置左侧栏的title,icon和所需要的权限，这里指必须是管理员才能访问
-          meta: { title: '修改通知', icon: 'el-icon-position', roles: ['admin'] }
+          meta: { title: '发布通知', icon: 'el-icon-position', roles: ['admin'] }
         }
       ]
   },
@@ -145,13 +145,13 @@ export const asyncRoutes = [
       {
         path:'/account/studentAccount',
         component: () => import('@/views//account/studentAccount'),
-        name:'accountManagement',
+        name:'studentAccount',
         meta: { title: '学生账号管理', icon: 'peoples', roles: ['admin']}
       },
       {
         path:'/account/teacherAccount',
         component: () => import('@/views//account/teacherAccount'),
-        name:'accountManagement',
+        name:'teacherAccount',
         meta: { title: '教师账号管理', icon: 'peoples', roles: ['admin']}
       }
     ]

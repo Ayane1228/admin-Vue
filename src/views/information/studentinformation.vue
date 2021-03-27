@@ -111,12 +111,40 @@ export default {
           major:null,
           introduction:null
         },
-         rules: {
+        rules: {
             phone:[{ validator: checkPhone, trigger: 'blur'  }],
             email:[{ validator: checkEmail, trigger: 'blur'  }]
-         }
+        },
+        studentInformationUrl:`${process.env.VUE_APP_BASE_API}/information`
       }
   },    
+  // 获取当前信息
+  beforeMount() {
+      const that = this
+      const dataForm = that.$data.form
+      const token = this.header
+      axios.get(`${this.$data.studentInformationUrl}/studentInformation`,{
+            // 并保存token到请求头中
+            headers:{
+              Authorization:token.Authorization
+            }
+        }).then( (res) =>{
+          if (res.data == '管理员无权访问学生个人信息') {
+            // 重定向
+            window.location.href = `${this.$data.studentInformationUrl}/errorinformation`
+          } else {
+              const result = res.data.data[0]
+              dataForm.truename = result.truename
+              dataForm.studentID = result.studentID
+              dataForm.phone = result.phone
+              dataForm.email = result.email
+              dataForm.major = result.major              
+              dataForm.introduction = result.introduction
+          }
+        }).catch( (err) => {
+          console.log(err);
+        })
+  },
   methods:{
     // 更新信息 
     onSubmit(form){
@@ -129,7 +157,7 @@ export default {
           const newEmail = this.$data.form.email
           const newIntroduction = this.$data.form.introduction
             axios({
-              url:'http://localhost:18082/information/studentChangeInf',
+              url:`${this.$data.studentInformationUrl}/studentChangeInf`,
               method:"post",
               headers:{ Authorization:token.Authorization },
               data:{ trueName,newPhone,newEmail,newIntroduction }
@@ -163,7 +191,7 @@ export default {
           } else {
             const token = this.header
             axios({
-              url:'http://localhost:18082/information/changeStudentPassword',
+              url:`${this.$data.studentInformationUrl}/changeStudentPassword`,
               method:'post',
               headers:{ Authorization:token.Authorization },
               data:{value}
@@ -174,6 +202,7 @@ export default {
                this.$message.error('修改密码失败！')
              }
            }).catch( (err) => {
+
              console.log(err);
            })
           }
@@ -193,33 +222,6 @@ export default {
         }
       }
     },
-    // 获取当前信息
-    beforeMount() {
-      const that = this
-      const dataForm = that.$data.form
-      const token = this.header
-      axios.get('http://localhost:18082/information/studentInformation',{
-            // 并保存token到请求头中
-            headers:{
-              Authorization:token.Authorization
-            }
-        }).then( (res) =>{
-          if (res.data == '管理员无权访问学生个人信息') {
-            // 重定向
-            window.location.href = 'http://localhost:9527/index.html#/information/errorinformation'
-          } else {
-              const result = res.data.data[0]
-              dataForm.truename = result.truename
-              dataForm.studentID = result.studentID
-              dataForm.phone = result.phone
-              dataForm.email = result.email
-              dataForm.major = result.major              
-              dataForm.introduction = result.introduction
-          }
-        }).catch( (err) => {
-          console.log(err);
-        })
-  }
 }
 </script>
 

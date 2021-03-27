@@ -124,8 +124,8 @@ export default {
         },
         // 前端验证规则
         rules:{
-          newTitle:[ { required: true, message: '请输入选题名称', trigger: 'blur' },
-                  { min: 3, message: '长度最少为3个字符', trigger: 'blur' } ]               
+          newTitle:[  { required: true, message: '请输入选题名称', trigger: 'blur' },
+                      { min: 3, message: '长度最少为3个字符', trigger: 'blur' } ]               
         }
       }
     },
@@ -138,20 +138,6 @@ export default {
       }
     },
     methods:{
-      // 提交成功
-      success() {
-        this.$message({
-          message: '提交成功',
-          type: 'success'
-        });
-      },
-      // 提交失败
-      fail(){
-          this.$message({
-          message: '提交失败',
-          type: 'error'
-        });
-      },
       // 提交新选题
       addNewSelect(selectForm){     
         const newTitle = this.$data.selectForm.newTitle
@@ -160,7 +146,6 @@ export default {
         this.$refs.selectForm.validate((valid) => {
         const newMajor = this.$refs['zhuangye'].getCheckedNodes()[0].data.value
           if (valid || !newMajor) {
-            this.success()
             const token = this.header
             axios({
               url:'http://localhost:18082/select/addSelect',
@@ -168,12 +153,15 @@ export default {
               headers:{ Authorization:token.Authorization },
               data:{newTitle,teacherName,newMajor,newContent}
             }).then( (res) => {
-              console.log(res);
+              if (res.data.meg = "已有相同选题"){
+                this.$message.error('不能添加重复选题，请重试')
+              } else {
+                this.$message.success(res.data.msg)
+              }
             }).catch( (err) => {
-              console.log(err);
+              this.$message.error('添加选题失败')
             })
           } else {
-            this.fail()
             return false;
           }
         });   
