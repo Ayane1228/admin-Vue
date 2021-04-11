@@ -74,21 +74,22 @@
       </el-form-item>
     </el-form>
     <!-- 弹出框 -->
-    <el-dialog 
-        title="修改密码:请输入四位以上的数字或字母。" 
-        :visible.sync="dialogFormVisible">
-        <el-form :model = "ruleForm" :rules = "rules" ref = "ruleForm" class = "ruleForm">
-          <el-form-item label = "新密码" prop = "password">
-            <el-input size="small" placeholder="请输入密码" v-model="ruleForm.password" show-password autocomplete="off"></el-input>
-          </el-form-item>
-          <el-form-item label = "确认密码" prop = "confirm">
-            <el-input size="small" placeholder="请确认密码" v-model="ruleForm.confirm" show-password autocomplete="off"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary" @click="changeStudentPassword">确 定</el-button>
-        </div>
+    <el-dialog
+      title="修改密码:请输入四位以上的数字或字母。"
+      :visible.sync="dialogFormVisible"
+    >
+      <el-form ref="ruleForm" :model="ruleForm" :rules="rules" class="ruleForm">
+        <el-form-item label="新密码" prop="password">
+          <el-input v-model="ruleForm.password" size="small" placeholder="请输入密码" show-password autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirm">
+          <el-input v-model="ruleForm.confirm" size="small" placeholder="请确认密码" show-password autocomplete="off" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="changeStudentPassword">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -142,12 +143,12 @@ export default {
       },
       ruleForm: {
         password: null,
-        confirm: null,
-      },      
+        confirm: null
+      },
       dialogFormVisible: false,
       rules: {
         phone: [{ validator: checkPhone, trigger: 'blur' }],
-        email: [{ validator: checkEmail, trigger: 'blur' }],
+        email: [{ validator: checkEmail, trigger: 'blur' }]
       },
       studentInformationUrl: `${process.env.VUE_APP_BASE_API}/information`
     }
@@ -170,7 +171,7 @@ export default {
       headers: {
         Authorization: token.Authorization
       }
-    }).then((res) => { 
+    }).then((res) => {
       if (res.data == '管理员无权访问学生个人信息') {
         this.$alert('管理员无法访问学生的个人信息')
         that.$data.isAdmin = true
@@ -227,46 +228,46 @@ export default {
           title: '错误',
           message: '密码不能为空,请重新输入',
           type: 'warning'
-        });
-        this.$data.ruleForm.password = null   
+        })
+        this.$data.ruleForm.password = null
         this.$data.ruleForm.confirm = null
-      } else if( this.$data.ruleForm.password != this.$data.ruleForm.confirm){   
+      } else if (this.$data.ruleForm.password != this.$data.ruleForm.confirm) {
         this.$notify({
-          title:'错误',
-          message:'两次密码不一致，请重新输入',
-          type:'warning'
-        })      
-      } else if(!reg.test(this.$data.ruleForm.password)) {
+          title: '错误',
+          message: '两次密码不一致，请重新输入',
+          type: 'warning'
+        })
+      } else if (!reg.test(this.$data.ruleForm.password)) {
         this.$notify({
-          title:'错误',
-          message:'请输入四位以上数字或字符的密码',
-          type:'waring'
+          title: '错误',
+          message: '请输入四位以上数字或字符的密码',
+          type: 'waring'
         })
       } else {
-          this.$data.dialogFormVisible = false
-          const newPassword = this.$data.ruleForm.password
-          const token = this.header
-          axios({
-            url: `${this.$data.studentInformationUrl}/changeStudentPassword`,
-            method: 'post',
-            headers: { Authorization: token.Authorization },
-            data: { newPassword }
-          }).then((res) => {
-            if (res.data.msg == '学生修改密码成功') {
-              this.$message.success('修改密码成功！')
-              this.$data.ruleForm.password = null   
-              this.$data.ruleForm.confirm = null      
-              } else {
-              this.$message.error('修改密码失败！')
-              this.$data.ruleForm.password = null   
-              this.$data.ruleForm.confirm = null              
-            }
-          }).catch((err) => {
-            console.log(err)
-          })
+        this.$data.dialogFormVisible = false
+        const newPassword = this.$data.ruleForm.password
+        const token = this.header
+        axios({
+          url: `${this.$data.studentInformationUrl}/changeStudentPassword`,
+          method: 'post',
+          headers: { Authorization: token.Authorization },
+          data: { newPassword }
+        }).then((res) => {
+          if (res.data.msg == '学生修改密码成功') {
+            this.$message.success('修改密码成功！')
+            this.$data.ruleForm.password = null
+            this.$data.ruleForm.confirm = null
+          } else {
+            this.$message.error('修改密码失败！')
+            this.$data.ruleForm.password = null
+            this.$data.ruleForm.confirm = null
+          }
+        }).catch((err) => {
+          console.log(err)
+        })
       }
+    }
   }
-}
 }
 </script>
 
