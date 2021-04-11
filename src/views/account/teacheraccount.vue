@@ -156,7 +156,7 @@ export default {
       }
       if (value) {
         setTimeout(() => {
-          var reg = /^[0-9a-zA-Z]{1,}$/
+          var reg = /^[0-9a-zA-Z]{4,}$/
           if (!reg.test(value)) {
             callback(new Error('请输入四位以上的数字或字母'))
           } else {

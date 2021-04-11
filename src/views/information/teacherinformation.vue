@@ -74,7 +74,6 @@
 <script>
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
-import { logout } from '@/api/user'
 
 export default {
   data() {

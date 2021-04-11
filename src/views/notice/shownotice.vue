@@ -97,9 +97,7 @@ export default {
         // 格式化时间
         item.noticeTime = utc2beijing(item.noticeTime)
         // 显示数据
-        that.$data.list.push(item)
-        // 翻转数组
-        that.$data.list.reverse()
+        that.$data.list.unshift(item)
       })
     }).catch(err => {
       console.log(err)

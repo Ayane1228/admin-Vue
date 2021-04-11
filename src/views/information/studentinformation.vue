@@ -56,14 +56,40 @@
       <el-form-item>
         <!-- 提交信息 -->
         <el-col :span="6">
-          <el-button type="primary" @click="onSubmit('form')">立即保存</el-button>
+          <el-button
+            type="primary"
+            :disabled="isAdmin"
+            @click="onSubmit('form')"
+          >立即保存</el-button>
         </el-col>
         <!-- 修改密码 -->
         <el-col :span="6">
-          <el-button type="warning" plain @click="changeStudentPassword">修改密码</el-button>
+          <el-button
+            type="warning"
+            plain
+            :disabled="isAdmin"
+            @click="dialogFormVisible = true"
+          >修改密码</el-button>
         </el-col>
       </el-form-item>
     </el-form>
+    <!-- 弹出框 -->
+    <el-dialog 
+        title="修改密码:请输入四位以上的数字或字母。" 
+        :visible.sync="dialogFormVisible">
+        <el-form :model = "ruleForm" :rules = "rules" ref = "ruleForm" class = "ruleForm">
+          <el-form-item label = "新密码" prop = "password">
+            <el-input size="small" placeholder="请输入密码" v-model="ruleForm.password" show-password autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label = "确认密码" prop = "confirm">
+            <el-input size="small" placeholder="请确认密码" v-model="ruleForm.confirm" show-password autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="changeStudentPassword">确 定</el-button>
+        </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -105,6 +131,7 @@ export default {
       }
     }
     return {
+      isAdmin: false,
       form: {
         truename: null,
         studentID: null,
@@ -113,9 +140,14 @@ export default {
         major: null,
         introduction: null
       },
+      ruleForm: {
+        password: null,
+        confirm: null,
+      },      
+      dialogFormVisible: false,
       rules: {
         phone: [{ validator: checkPhone, trigger: 'blur' }],
-        email: [{ validator: checkEmail, trigger: 'blur' }]
+        email: [{ validator: checkEmail, trigger: 'blur' }],
       },
       studentInformationUrl: `${process.env.VUE_APP_BASE_API}/information`
     }
@@ -138,10 +170,10 @@ export default {
       headers: {
         Authorization: token.Authorization
       }
-    }).then((res) => {
+    }).then((res) => { 
       if (res.data == '管理员无权访问学生个人信息') {
-        // 重定向
-        window.location.href = `${this.$data.studentInformationUrl}/errorinformation`
+        this.$alert('管理员无法访问学生的个人信息')
+        that.$data.isAdmin = true
       } else {
         const result = res.data.data[0]
         dataForm.truename = result.truename
@@ -189,40 +221,52 @@ export default {
     },
     // 学生修改密码
     changeStudentPassword() {
-      this.$prompt('请输入新密码', '修改密码', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      }).then(({ value }) => {
-        if (value.length < 4) {
-          this.$message({
-            type: 'error',
-            message: '新密码必须大于四位!'
-          })
-        } else {
+      var reg = /^[0-9a-zA-Z]{4,}$/
+      if (this.$data.ruleForm.password == null || this.$data.ruleForm.confirm == null) {
+        this.$notify({
+          title: '错误',
+          message: '密码不能为空,请重新输入',
+          type: 'warning'
+        });
+        this.$data.ruleForm.password = null   
+        this.$data.ruleForm.confirm = null
+      } else if( this.$data.ruleForm.password != this.$data.ruleForm.confirm){   
+        this.$notify({
+          title:'错误',
+          message:'两次密码不一致，请重新输入',
+          type:'warning'
+        })      
+      } else if(!reg.test(this.$data.ruleForm.password)) {
+        this.$notify({
+          title:'错误',
+          message:'请输入四位以上数字或字符的密码',
+          type:'waring'
+        })
+      } else {
+          this.$data.dialogFormVisible = false
+          const newPassword = this.$data.ruleForm.password
           const token = this.header
           axios({
             url: `${this.$data.studentInformationUrl}/changeStudentPassword`,
             method: 'post',
             headers: { Authorization: token.Authorization },
-            data: { value }
+            data: { newPassword }
           }).then((res) => {
             if (res.data.msg == '学生修改密码成功') {
               this.$message.success('修改密码成功！')
-            } else {
+              this.$data.ruleForm.password = null   
+              this.$data.ruleForm.confirm = null      
+              } else {
               this.$message.error('修改密码失败！')
+              this.$data.ruleForm.password = null   
+              this.$data.ruleForm.confirm = null              
             }
           }).catch((err) => {
             console.log(err)
           })
-        }
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '取消输入'
-        })
-      })
-    }
+      }
   }
+}
 }
 </script>
 

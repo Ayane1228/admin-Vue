@@ -204,8 +204,7 @@ export default {
     var checkPassword = (rule, value, callback) => {
       if (!value) {
         return callback()
-      }
-      if (value) {
+      } if (value) {
         setTimeout(() => {
           var reg = /^[0-9a-zA-Z]{1,}$/
           if (!reg.test(value)) {
