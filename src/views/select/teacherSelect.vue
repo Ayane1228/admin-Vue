@@ -60,7 +60,7 @@
         <el-table-column
           prop="pick"
           label="是否选中"
-          width="120"
+          width="110"
         >
           <template slot-scope="scope">
             <!-- 三元运算符定义tag的内容 -->

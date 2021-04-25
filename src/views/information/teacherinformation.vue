@@ -236,7 +236,7 @@ export default {
               headers: { Authorization: token.Authorization },
               data: { trueName, newPhone, newEmail, newOffice, newTeacherrank }
             }).then((res) => {
-              if (res.data.msg == '修改教师信息成功') {
+              if (res.data.msg == '修改教师信息成功,请刷新页面') {
                 this.$message.success('修改教师信息成功，请刷新页面')
               } else {
                 this.$message.error('修改教师信息失败，请重试')
