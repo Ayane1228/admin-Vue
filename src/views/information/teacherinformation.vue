@@ -49,7 +49,7 @@
         <el-col :span="10">
           <el-input
             v-model="form.teacherrank"
-            :disabled="flag == 0"
+            :disabled="flag === 0"
           />
         </el-col>
       </el-form-item>
@@ -62,8 +62,8 @@
         </el-col>
         <el-button
           type="warning"
-          :disabled="flag == 0"
-            @click="dialogFormVisible = true"
+          :disabled="flag === 0"
+          @click="dialogFormVisible = true"
         >
           修改密码
         </el-button>
@@ -86,7 +86,7 @@
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="changeTeacherPassword">确 定</el-button>
       </div>
-    </el-dialog>    
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -143,7 +143,7 @@ export default {
         password: null,
         confirm: null
       },
-      dialogFormVisible: false,      
+      dialogFormVisible: false,
       rules: {
         phone: [{ validator: checkPhone, trigger: 'blur' }],
         email: [{ validator: checkEmail, trigger: 'blur' }]
@@ -172,7 +172,7 @@ export default {
       }
     }).then((res) => {
       // 判断管理员还是教师账号
-      if (res.data.msg == '获取admin信息成功') {
+      if (res.data.msg === '获取admin信息成功') {
         that.$data.flag = 0
         this.$message({
           message: '管理员账号',
@@ -236,7 +236,7 @@ export default {
               headers: { Authorization: token.Authorization },
               data: { trueName, newPhone, newEmail, newOffice, newTeacherrank }
             }).then((res) => {
-              if (res.data.msg == '修改教师信息成功,请刷新页面') {
+              if (res.data.msg === '修改教师信息成功,请刷新页面') {
                 this.$message.success('修改教师信息成功，请刷新页面')
               } else {
                 this.$message.error('修改教师信息失败，请重试')
@@ -255,7 +255,7 @@ export default {
     // 修改密码
     changeTeacherPassword() {
       var reg = /^[0-9a-zA-Z]{4,}$/
-      if (this.$data.ruleForm.password == null || this.$data.ruleForm.confirm == null) {
+      if (this.$data.ruleForm.password === null || this.$data.ruleForm.confirm === null) {
         this.$notify({
           title: '错误',
           message: '密码不能为空,请重新输入',
@@ -287,7 +287,7 @@ export default {
           headers: { Authorization: token.Authorization },
           data: { newPassword }
         }).then((res) => {
-          if (res.data.msg == '教师修改密码成功') {
+          if (res.data.msg === '教师修改密码成功') {
             this.$message.success('修改密码成功!')
           } else {
             this.$message.error('修改密码失败！')
