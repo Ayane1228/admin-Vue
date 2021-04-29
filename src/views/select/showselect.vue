@@ -243,6 +243,20 @@ export default {
       }
     }
   },
+  // 获取选题信信息
+  created() {
+    const that = this
+    const token = this.header
+    axios.get(`${this.$data.showSelectUrl}/allSelect`, {
+      // 并保存token到请求头中
+      headers: { Authorization: token.Authorization }
+    }).then(function(res) {
+      // 保存到data中
+      res.data.data.map((item) => {
+        that.$data.allSelect.push(item)
+      })
+    }).catch(err => { console.log(err) })
+  },
   // 判断是否为学生账号,验证修改前端 istrue的值
   beforeMount() {
     const that = this
@@ -267,20 +281,6 @@ export default {
     }).catch((err) => {
       console.log(err)
     })
-  },
-  // 获取选题信信息
-  mounted() {
-    const that = this
-    const token = this.header
-    axios.get(`${this.$data.showSelectUrl}/allSelect`, {
-      // 并保存token到请求头中
-      headers: { Authorization: token.Authorization }
-    }).then(function(res) {
-      // 保存到data中
-      res.data.data.map((item) => {
-        that.$data.allSelect.push(item)
-      })
-    }).catch(err => { console.log(err) })
   },
   methods: {
     // 学生确认选题

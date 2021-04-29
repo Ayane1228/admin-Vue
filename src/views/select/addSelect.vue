@@ -55,7 +55,7 @@
         </el-row>
         <el-row>
           <el-col :span="11">
-            <el-form-item label="设计相关描述" prop="selectForm">
+            <el-form-item label="选题相关描述" prop="selectForm">
               <el-input
                 v-model="selectForm.textarea"
                 type="textarea"
@@ -182,13 +182,13 @@ export default {
             headers: { Authorization: token.Authorization },
             data: { newTitle, teacherName, newMajor, newContent }
           }).then((res) => {
-            if (res.data.meg === '已有相同选题') {
-              this.$message.error('不能添加重复选题，请重试')
+            if( res.data.msg == '已有相同选题' ){
+              this.$message.error('已有相同选题')
             } else {
-              this.$message.success(res.data.msg)
+              this.$message.success('添加选题成功')
             }
           }).catch((err) => {
-            this.$message.error('添加选题失败')
+            this.$message.error('添加选题失败' + err)
           })
         } else {
           return false

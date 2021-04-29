@@ -82,7 +82,7 @@ export default {
     }
   },
   // 获取公告
-  beforeMount() {
+  created() {
     const that = this
     const token = this.header
     // 请求后端数据

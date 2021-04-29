@@ -27,6 +27,7 @@
           <el-col :span="5">
             <el-form-item label="工号" prop="newTeacherID">
               <el-input
+                type="number"
                 v-model.number="newTeacherForm.newTeacherID"
                 placeholder="工号"
               />
@@ -202,7 +203,7 @@ export default {
     }
   },
   // 查询数据
-  beforeMount() {
+  created() {
     const that = this
     const token = this.header
     // 请求后端数据
@@ -278,31 +279,35 @@ export default {
     },
     // 删除教师账号
     deleteTeacher(index, row) {
-      const deleteTeacherAccountName = row.username
-      const token = this.header
-      this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        axios({
-          url: `${this.$data.teacherAccountUrl}/deleteTeacher`,
-          method: 'post',
-          headers: { Authorization: token.Authorization },
-          data: { deleteTeacherAccountName }
-        }).then((res) => {
-          // 判断是否有相关选题
-          if (res.data.msg == '删除账号存在相关选题存在，禁止删除账号！') {
-            this.$message.error(`${res.data.msg}`)
-          } else {
-            this.$message.success(`${res.data.msg}`)
-          }
-        }).catch((err) => {
-          console.log(err)
+      if (row.username === 'admin') {
+         this.$message.error('无法删除管理员账号');
+      } else {
+        const deleteTeacherAccountName = row.username
+        const token = this.header
+        this.$confirm('此操作将永久删除该账号, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          axios({
+            url: `${this.$data.teacherAccountUrl}/deleteTeacher`,
+            method: 'post',
+            headers: { Authorization: token.Authorization },
+            data: { deleteTeacherAccountName }
+          }).then((res) => {
+            // 判断是否有相关选题
+            if (res.data.msg == '删除账号存在相关选题存在，禁止删除账号！') {
+              this.$message.error(`${res.data.msg}`)
+            } else {
+              this.$message.success(`${res.data.msg}`)
+            }
+          }).catch((err) => {
+            console.log(err)
+          })
+        }).catch(() => {
+          this.$message.info('取消删除')
         })
-      }).catch(() => {
-        this.$message.info('取消删除')
-      })
+      } 
     }
   }
 }

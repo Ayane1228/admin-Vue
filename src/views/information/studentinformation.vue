@@ -162,7 +162,7 @@ export default {
     }
   },
   // 获取当前信息
-  beforeMount() {
+  created() {
     const that = this
     const dataForm = that.$data.form
     const token = this.header
@@ -240,7 +240,7 @@ export default {
       } else if (!reg.test(this.$data.ruleForm.password)) {
         this.$notify({
           title: '错误',
-          message: '请输入四位以上数字或字符的密码',
+          message: '请输入四位以上数字或字符组成的密码',
           type: 'waring'
         })
       } else {

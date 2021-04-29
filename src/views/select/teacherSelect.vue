@@ -151,7 +151,7 @@ export default {
   },
 
   // 获取当前教师选题信息
-  beforeMount() {
+  created() {
     const that = this
     const token = this.header
     axios.get(`${this.$data.teacherSelectUrl}/teachersSelect`,

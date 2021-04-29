@@ -49,7 +49,7 @@ export const asyncRoutes = [
     component: Layout,
     // 重定向
     redirect: '/notice/shownotice',
-    meta: { title: '通知', icon: 'el-icon-position' },
+    meta: { title: '公告', icon: 'el-icon-position' },
     // 子路由
     children: [
       {
@@ -57,7 +57,7 @@ export const asyncRoutes = [
         // 懒加载
         component: () => import('@/views//notice/shownotice'),
         name: 'shownotice',
-        meta: { title: '最新通知', icon: 'el-icon-position' }
+        meta: { title: '最新公告', icon: 'el-icon-position' }
       },
       {
         path: '/notice/changenotice',
@@ -65,7 +65,7 @@ export const asyncRoutes = [
         component: () => import('@/views//notice/changenotice'),
         name: 'changenotice',
         // 设置左侧栏的title,icon和所需要的权限，这里指必须是管理员才能访问
-        meta: { title: '发布通知', icon: 'el-icon-position', roles: ['admin'] }
+        meta: { title: '发布公告', icon: 'el-icon-position', roles: ['admins'] }
       }
     ]
   },
@@ -76,13 +76,6 @@ export const asyncRoutes = [
     redirect: '/select/showselect',
     meta: { title: '论文选题', icon: 'edit' },
     children: [
-      {
-        path: '/selcet/errorselect',
-        component: () => import('@/views//select/errorSelect'),
-        name: 'errorSelect',
-        meta: { title: '管理提交选题错误', icon: 'edit', roles: ['admin'] },
-        hidden: true
-      },
       {
         path: '/select/showselect',
         component: () => import('@/views//select/showSelect'),
@@ -125,7 +118,7 @@ export const asyncRoutes = [
         path: '/information/teacherinformation',
         component: () => import('@/views//information/teacherinformation'),
         name: 'teacherinformation',
-        meta: { title: '教师个人信息', icon: 'user', roles: ['teacher'] }
+        meta: { title: '教师个人信息', icon: 'user', roles: ['teacher','admins'] }
       }
     ]
   },
@@ -133,19 +126,19 @@ export const asyncRoutes = [
   {
     path: '/account ',
     component: Layout,
-    meta: { title: '账号管理', icon: 'peoples', roles: ['admin'] },
+    meta: { title: '账号管理', icon: 'peoples', roles: ['admins'] },
     children: [
       {
         path: '/account/studentAccount',
         component: () => import('@/views//account/studentAccount'),
         name: 'studentAccount',
-        meta: { title: '学生账号管理', icon: 'peoples', roles: ['admin'] }
+        meta: { title: '学生账号管理', icon: 'peoples', roles: ['admins'] }
       },
       {
         path: '/account/teacherAccount',
         component: () => import('@/views//account/teacherAccount'),
         name: 'teacherAccount',
-        meta: { title: '教师账号管理', icon: 'peoples', roles: ['admin'] }
+        meta: { title: '教师账号管理', icon: 'peoples', roles: ['admins'] }
       }
     ]
   },

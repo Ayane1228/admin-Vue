@@ -96,7 +96,7 @@ export default {
       }
     }
   },
-  beforeMount() {
+  created() {
     const token = this.header
     // 请求后端数据
     axios.get(`${this.$data.studentSelectUrl}/studentSelect`, {

@@ -15,13 +15,13 @@
         type="success"
         @click="submitNotice"
       >
-        发布新通知
+        发布新公告
       </el-button>
     </div>
     <hr>
     <!-- 通知展示 -->
     <div id="main">
-      <h3>最新通知</h3>
+      <h3>最新公告</h3>
       <el-table
         :data="list"
         stripe
@@ -83,7 +83,7 @@ export default {
       }
     }
   },
-  beforeMount() {
+  created() {
     const that = this
     const token = this.header
     // 请求后端数据
@@ -123,27 +123,34 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         }).then(({ value }) => {
-          // 获取当前的token
-          const token = this.header
-          axios({
-            url: `${this.$data.noticeUrl}/changenotice`,
-            method: 'post',
-            headers: { Authorization: token.Authorization },
-            data: { noticeTitle: value, noticeContent: this.$data.textareaContent }
-          }).then((res) => {
-            if (res.data.msg == '发布成功') {
-              this.$message.success('发布成功,标题为: ' + value + ',请刷新页面')
-            } else {
-              this.$message.error('发布成功失败，请检查接口')
-            }
-          }).catch((err) => {
-            console.log(err)
-          }).catch(() => {
-            this.$message({
-              type: 'error',
-              message: '发布失败'
+          if ( value === null || value.length ===0 ) {
+              this.$notify.error({
+              title: '错误',
+              message: '公告标题不能为空'
+            });
+          } else {
+            // 获取当前的token
+            const token = this.header
+            axios({
+              url: `${this.$data.noticeUrl}/changenotice`,
+              method: 'post',
+              headers: { Authorization: token.Authorization },
+              data: { noticeTitle: value, noticeContent: this.$data.textareaContent }
+            }).then((res) => {
+              if (res.data.msg == '发布成功') {
+                this.$message.success('发布成功,标题为: ' + value + ',请刷新页面')
+              } else {
+                this.$message.error('发布成功失败，请检查接口')
+              }
+            }).catch((err) => {
+              console.log(err)
+            }).catch(() => {
+              this.$message({
+                type: 'error',
+                message: '发布失败'
+              })
             })
-          })
+          }
         })
       }
     },

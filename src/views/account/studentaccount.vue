@@ -34,6 +34,7 @@
           <el-col :span="5">
             <el-form-item label="学号" prop="newStudentID">
               <el-input
+                  type="number"
                 v-model.number="newStudentForm.newStudentID"
                 placeholder="学号"
               />
@@ -43,6 +44,7 @@
           <el-col :span="5">
             <el-form-item label="班号" prop="newStudentClassID">
               <el-input
+                type="number"
                 v-model.number="newStudentForm.newStudentClassID"
                 placeholder="班号"
               />
@@ -285,7 +287,7 @@ export default {
     }
   },
   // 查询数据
-  beforeMount() {
+  created() {
     const that = this
     const token = this.header
     console.log(this.$data.studentAccountURl)

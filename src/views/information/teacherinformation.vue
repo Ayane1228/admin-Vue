@@ -160,7 +160,7 @@ export default {
     }
   },
   // 获取默认数据
-  beforeMount() {
+  created() {
     const that = this
     const dataForm = that.$data.form
     const token = this.header
